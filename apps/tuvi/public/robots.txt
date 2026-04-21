@@ -1,6 +1,7 @@
 User-agent: *
 Allow: /
 Allow: /tools/
+Allow: /tu-vi/
 Allow: /api/
 
 Disallow: /admin/
