@@ -88,97 +88,36 @@ phase_progress: "Phase 1: ✅ 100% | Phase 2: ✅ 100% | Phase 3: 🟡 In Progre
 ### Step 4: Execution *(nếu đang làm)*
 
 - **Status**: `in_progress`
-- **Snapshot Commit**: N/A
-- **Completed Modules**:
-  - [x] TASK-01-00: Project Scaffolding & Base Config (Monorepo, Turbo, Next.js apps, Shared Tailwind)
-  - [x] TASK-01-01: Core Database Schema Implementation ✅ DONE (2026-04-21)
-  - [x] TASK-01-02: SSO Service (id.vutera.net) ✅ DONE (2026-04-21)
-  - [x] TASK-01-03: Shared Auth Middleware & Context ✅ DONE (2026-04-21)
-  - [x] TASK-02-00 to TASK-02-04: TuVi App (Traffic Engine) ✅ DONE
-  - [x] TASK-03-00: MenhAn Sanctuary Scaffolding & UI ✅ DONE (2026-04-21)
-- **Decisions Made During Execution**:
-  - Used pnpm workspaces with TurboRepo.
-  - Shared Tailwind theme via a dedicated package `@harmony/tailwind-config` using CSS variables in `@theme` block for Next.js 15 compatibility.
-  - Database layer: Prisma ORM in `packages/database` package, shared across apps for unified data management.
-  - Prisma schema: Comprehensive data model with proper relationships (cascade deletes), indexes, and enum types (Gender, Element, SubscriptionPlan, SubscriptionStatus).
-  - Authentication: JWT-based (HS256) with 7-day expiration, HTTP-only cookies for .vutera.net domain, bcryptjs for password hashing (10 salt rounds).
-  - SSO approach: Centralized id.vutera.net service handling auth logic, other apps consume JWT via /api/auth/me endpoint.
-- **Issues Encountered**:
-  - Fixed pnpm workspace dependency resolution for local packages.
-- **TASK-01-01 Completion Summary** ✅:
-  - [x] Enhanced Prisma schema with all entities (User, Profile, Chart, Prediction, JournalEntry, Subscription)
-  - [x] Added missing fields (fullName, birthTimezone, energyScore, PDF quota tracking)
-  - [x] Setup proper indexes and foreign key constraints (onDelete: Cascade)
-  - [x] Created comprehensive seed.ts script for sample data
-  - [x] Written 15+ CRUD integration tests covering all models and relationships
-  - [x] Created README.md with setup, migration, and usage guide
-  - [x] Created .env.example template
-  - **Commit**: 3126d772 (TASK-01-01: Implement Core Database Schema)
+- **Current Focus**: TASK-03-01 (Master AI Engine - Core)
+- **Snapshot Commit**: See commits below per task
 
-- **TASK-01-02 Completion Summary** ✅:
-  - [x] Implemented JWT-based SSO with 7-day token expiration
-  - [x] API routes: /register, /login, /me, /profile, /logout
-  - [x] Pages: login, register, profile management, landing page
-  - [x] Password validation: 8+ chars with uppercase, lowercase, numbers
-  - [x] Secure password hashing with bcryptjs (10 salt rounds)
-  - [x] HTTP-only cookies scoped to .vutera.net domain
-  - [x] Profile management: birth data (date, time, timezone, location)
-  - [x] Input validation with Zod schemas (RegisterSchema, LoginSchema, ProfileSchema)
-  - [x] User + subscription data returned from /api/auth/me
-  - **Commit**: a1e0d454 (TASK-01-02: Implement SSO Service)
+#### Phase 1 Summary (✅ DONE)
+- TASK-01-00 ✅ Project Scaffolding & Base Config | Commit: -
+- TASK-01-01 ✅ Core Database Schema | Commit: 3126d772
+- TASK-01-02 ✅ SSO Service | Commit: a1e0d454
+- TASK-01-03 ✅ Shared Auth Middleware | Commit: e337ff1e
 
-- **TASK-02-00 Completion Summary** ✅:
-  - [x] Created Header, Hero, QuickToolsGrid, Footer components
-  - [x] Implemented mobile-first responsive design (1 → 2 → 4 grid columns)
-  - [x] Modern UI with gradient colors (Blue, Cyan, Emerald, Purple, Amber)
-  - [x] Vietnamese SEO metadata (title, description, keywords, OpenGraph)
-  - [x] Auto-generated sitemap.xml endpoint
-  - [x] Created robots.txt for search crawlers
-  - [x] Home page wrapped with AuthProvider
-  - [x] Smooth hover effects + transitions
-  - [x] Performance optimized (emoji icons, minimal CSS)
-  - **Commit**: 6ccd9046 (TASK-02-00: TuVi App Scaffolding & Light UI)
+#### Phase 2 Summary (✅ DONE)
+- TASK-02-00 ✅ TuVi Scaffolding & Light UI | Commit: 6ccd9046
+- TASK-02-01 ✅ Quick Tools | Commit: defac681
+- TASK-02-02 ✅ Basic Chart Generator | Status: ✅ DONE
+- TASK-02-03 ✅ SEO Content Engine | Commit: e39c0096
+- TASK-02-04 ✅ Lead Capture & MenhAn Bridge | Commit: 7317e801
 
-- **TASK-02-04 Completion Summary** ✅:
-  - [x] Add Lead model to Prisma schema (email, birthYear, zodiac, source, aiHook, timestamps)
-  - [x] Run prisma db push + prisma generate to sync PostgreSQL schema
-  - [x] Create lib/leadgen.ts:
-    * generateAIHook() - 12 personalized teaser templates per zodiac
-    * buildMenhAnUrl() - MenhAn redirect with UTM params (zodiac slug, year, source)
-    * isValidEmail() - Email format validation
-  - [x] Create POST /api/leads endpoint:
-    * Validates email + birth year
-    * Generates AI Hook deterministically
-    * Saves lead to DB with graceful degradation
-    * Returns { aiHook, redirectUrl } for immediate client redirect
-  - [x] Create LeadCaptureForm.tsx - Two-state client component:
-    * State 1: Form (email + birth year inputs)
-    * State 2: Hook reveal (teaser text + redirect button)
-    * Submits to /api/leads, displays AI Hook, then redirects
-  - [x] Convert Hero.tsx to client component:
-    * Inject LeadCaptureForm below trust indicators
-    * source="tuvi-home" for homepage lead tracking
-    * Dynamic zodiac derivation from user-entered birth year
-  - [x] Update TuViYearContent.tsx:
-    * Replace static Premium CTA with LeadCaptureForm
-    * Pre-fill zodiac, year, luck areas from article context
-    * source="tuvi-article" for SEO article lead tracking
-  - [x] MenhAn redirect URL with context params:
-    * Format: https://menhan.vutera.net?zodiac={slug}&year={birthYear}&currentYear={year}&ref=tuvi&utm_source=tuvi&utm_medium=lead-form&utm_campaign={source}
-    * Preserves zodiac and birth year for MenhAn onboarding
-  - [x] @harmony/database dependency added to tuvi app
-  - [x] Build successful: 83 routes (1 new API + 71 articles + 4 tools + 7 core)
-  - [x] Zero TypeScript errors, all types generated
-  - **Commit**: 7317e801 (TASK-02-04: Lead Capture & MenhAn Bridge)
+#### Phase 3 Status (🟡 IN PROGRESS)
+- TASK-03-00 ✅ MenhAn Scaffolding & Zen UI | Status: ✅ DONE
+- TASK-03-01 🔄 Master AI Engine (Core) | Status: 🔄 IN PROGRESS
+- TASK-03-02 ⏳ Advanced Chart Analysis | Status: Pending
+- TASK-03-03 ⏳ Pay-per-view Implementation | Status: Pending
 
-- **TASK-03-00 Completion Summary** ✅:
-  - [x] Scaffolded `apps/menhan` with Next.js 16 and TypeScript.
-  - [x] Implemented "Zen" Premium Theme using Tailwind 4 and custom Harmony color palette.
-  - [x] Created Landing Page with high-end aesthetics and ambient glows.
-  - [x] Implemented User Profile Completion flow (/onboarding) and API endpoint to update `Profile` in DB.
-  - [x] Developed Master AI Chat Interface with streaming response UI and Markdown support.
-  - [x] Integrated basic session-based auth via `@harmony/auth`.
-  - **Commit**: (TBD)
+**Architecture Decisions Made**:
+- pnpm workspaces + TurboRepo for monorepo
+- Shared Tailwind theme via `@harmony/tailwind-config` with CSS variables
+- Prisma ORM in `packages/database` shared across apps
+- JWT-based auth (HS256, 7-day expiration, HTTP-only cookies)
+- Deterministic Layer → AI Layer architecture for Master AI
+
+**Detailed task documentation**: See `specs/phases/phase-0X-*.md` for full breakdowns
 
 ---
 
