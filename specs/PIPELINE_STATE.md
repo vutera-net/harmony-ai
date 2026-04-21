@@ -64,12 +64,12 @@ plan_mode: "phased"
 
 ### Step 3: Task Breakdown *(nếu đã làm)*
 
-- **Status**: `pending`
-- **Output file**: `specs/IMPLEMENTATION_PLAN.md` hoặc `specs/REFACTOR.md`
-- **Total Tasks**: [Số lượng tasks]
-- **Completed Tasks**: [Số tasks đã xong / tổng]
-- **Current Task**: [TASK-XX: Tên task đang làm dở, nếu có]
-- **Blockers**: [Có vấn đề gì chưa giải quyết không?]
+- **Status**: `done`
+- **Output file**: `specs/IMPLEMENTATION_PLAN.md`
+- **Total Tasks**: 4 (TASK-01-00 to TASK-01-03)
+- **Completed Tasks**: 1/4
+- **Current Task**: TASK-01-01: Core Database Schema Implementation
+- **Blockers**: None
 
 ---
 
@@ -90,14 +90,21 @@ plan_mode: "phased"
 - **Snapshot Commit**: N/A
 - **Completed Modules**:
   - [x] TASK-01-00: Project Scaffolding & Base Config (Monorepo, Turbo, Next.js apps, Shared Tailwind)
-  - [ ] TASK-01-01: Core Database Schema Implementation
+  - [🔄] TASK-01-01: Core Database Schema Implementation *(in_progress)*
   - [ ] TASK-01-02: SSO Service (id.vutera.net)
   - [ ] TASK-01-03: Shared Auth Middleware & Context
 - **Decisions Made During Execution**:
   - Used pnpm workspaces with TurboRepo.
   - Shared Tailwind theme via a dedicated package `@harmony/tailwind-config` using CSS variables in `@theme` block for Next.js 15 compatibility.
+  - Database layer: Prisma ORM in `packages/database` package, shared across apps for unified data management.
 - **Issues Encountered**:
   - Fixed pnpm workspace dependency resolution for local packages.
+- **TASK-01-01 Progress**:
+  - [x] Prisma schema structure exists (User, Profile, Chart, Prediction, JournalEntry, Subscription)
+  - [ ] Enhance schema with missing fields (fullName, etc.) and indexes
+  - [ ] Setup DATABASE_URL and create migrations
+  - [ ] Create seed data script
+  - [ ] Write integration tests for CRUD operations
 
 
 ---

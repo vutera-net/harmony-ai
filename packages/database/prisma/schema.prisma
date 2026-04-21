@@ -41,84 +41,115 @@ model User {
   profile       Profile?
   subscriptions Subscription[]
   journalEntries JournalEntry[]
+
+  @@index([email])
 }
 
 model Profile {
   id            String    @id @default(cuid())
   userId        String    @unique
-  user          User      @relation(fields: [userId], references: [id])
-  
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  fullName      String?
   gender        Gender
   birthDate     DateTime
-  birthTime     String?   // HH:mm
-  birthLocation String?
-  energyType    Element?
-  
+  birthTime     String?   // HH:mm format (e.g., "14:30")
+  birthTimezone String?   // IANA timezone (e.g., "Asia/Ho_Chi_Minh")
+  birthLocation String?   // City/Province
+  energyType    Element?  // Primary element (Wu Xing)
+
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-  
+
   charts        Chart[]
+
+  @@index([userId])
 }
 
 model Chart {
   id          String   @id @default(cuid())
   profileId   String
-  profile     Profile  @relation(fields: [profileId], references: [id])
-  
+  profile     Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
   type        String   // e.g., "TzVi", "BatTu"
-  rawData     Json     // The raw calculation data
-  analysis    Json?    // Cached AI analysis
-  
+  rawData     Json     // The raw calculation data (star positions, elements, etc.)
+  analysis    Json?    // Cached AI analysis result
+  energyScore Json?    // { metal: 20, wood: 30, water: 10, fire: 20, earth: 20 }
+
+  predictions Prediction[]
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([profileId])
+  @@index([type])
+  @@index([createdAt])
 }
 
 model Prediction {
   id          String   @id @default(cuid())
   chartId     String
-  chart       Chart    @relation(fields: [chartId], references: [id])
-  
-  category    String   // e.g., "Health", "Career", "Love"
-  content     String
-  targetDate  DateTime?
-  
+  chart       Chart    @relation(fields: [chartId], references: [id], onDelete: Cascade)
+
+  category    String   // e.g., "Health", "Career", "Love", "General"
+  content     String   // AI prediction text (markdown)
+  targetDate  DateTime?  // Predicted event date
+  isVerified  Boolean  @default(false)
+
+  journalEntries JournalEntry[]
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  
-  journalEntries JournalEntry[]
+
+  @@index([chartId])
+  @@index([category])
+  @@index([targetDate])
 }
 
 model JournalEntry {
   id            String   @id @default(cuid())
   userId        String
-  user          User     @relation(fields: [userId], references: [id])
-  
-  content       String
-  eventDate     DateTime
-  
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  content       String   // User's event description
+  eventDate     DateTime // When the event happened
+
   predictionId  String?
-  prediction    Prediction? @relation(fields: [predictionId], references: [id])
-  
-  verification  String?  // AI's verification of the alignment
-  trustScore    Float?   // Impact on trust score
-  
+  prediction    Prediction? @relation(fields: [predictionId], references: [id], onDelete: SetNull)
+
+  status        String   @default("unverified") // unverified | verified | mismatch
+  verification  String?  // AI's verification analysis
+  trustScore    Float?   // Impact on trust score (0.0-1.0)
+
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+
+  @@index([userId])
+  @@index([eventDate])
+  @@index([status])
 }
 
 model Subscription {
-  id          String             @id @default(cuid())
-  userId      String
-  user        User               @relation(fields: [userId], references: [id])
-  
-  plan        SubscriptionPlan   @default(FREE)
-  status      SubscriptionStatus @default(ACTIVE)
-  
-  startDate   DateTime           @default(now())
-  endDate     DateTime?
-  
-  stripeId    String?            @unique
-  
-  createdAt   DateTime           @default(now())
-  updatedAt   DateTime           @updatedAt
+  id            String             @id @default(cuid())
+  userId        String
+  user          User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  plan          SubscriptionPlan   @default(FREE)
+  status        SubscriptionStatus @default(ACTIVE)
+
+  startDate     DateTime           @default(now())
+  endDate       DateTime?          // Expiration date (null = lifetime or active)
+
+  pdfGenerationQuota Int           @default(1)   // How many PDFs per quarter
+  pdfUsed        Int               @default(0)   // PDFs already generated this quarter
+
+  paymentMethod String?            // e.g., "stripe", "bank_transfer"
+  stripeId      String?            @unique      // Stripe subscription ID
+  externalId    String?                         // Payment provider external ID
+
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+
+  @@index([userId])
+  @@index([status])
 }
