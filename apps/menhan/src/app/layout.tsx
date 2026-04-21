@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { AuthProvider } from "@harmony/auth";
 
 export const metadata: Metadata = {
   title: "MenhAn Sanctuary | AI Mentor",
@@ -15,9 +14,7 @@ export default function RootLayout({
   return (
     <html lang="vi">
       <body className="min-h-screen antialiased selection:bg-harmony-gold/30">
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+        {children}
       </body>
     </html>
   );
