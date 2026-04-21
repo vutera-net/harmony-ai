@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Allow: /tools/
+Allow: /api/
+
+Disallow: /admin/
+Disallow: /private/
+Disallow: /api/auth/
+
+Sitemap: https://tuvi.vutera.net/sitemap.xml
+
+# Crawl delay to prevent server overload
+Crawl-delay: 1
