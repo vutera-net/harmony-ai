@@ -86,17 +86,19 @@ plan_mode: "phased"
 
 ### Step 4: Execution *(nếu đang làm)*
 
-- **Status**: `pending`
-- **Snapshot Commit**: [Git commit hash của pre-execute snapshot]
+- **Status**: `in_progress`
+- **Snapshot Commit**: N/A
 - **Completed Modules**:
-  - [ ] TASK-00: Config setup
-  - [ ] TASK-01: ...
-  - [ ] TASK-02: ...
+  - [x] TASK-01-00: Project Scaffolding & Base Config (Monorepo, Turbo, Next.js apps, Shared Tailwind)
+  - [ ] TASK-01-01: Core Database Schema Implementation
+  - [ ] TASK-01-02: SSO Service (id.vutera.net)
+  - [ ] TASK-01-03: Shared Auth Middleware & Context
 - **Decisions Made During Execution**:
-  - [Ví dụ: "Chọn bcrypt thay vì argon2 vì team quen hơn"]
-  - [Ví dụ: "Bỏ field X trong response vì không cần thiết"]
+  - Used pnpm workspaces with TurboRepo.
+  - Shared Tailwind theme via a dedicated package `@harmony/tailwind-config` using CSS variables in `@theme` block for Next.js 15 compatibility.
 - **Issues Encountered**:
-  - [Vấn đề gặp phải và cách giải quyết]
+  - Fixed pnpm workspace dependency resolution for local packages.
+
 
 ---
 

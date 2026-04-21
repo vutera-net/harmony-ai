@@ -1,0 +1,124 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum Element {
+  WOOD
+  FIRE
+  EARTH
+  METAL
+  WATER
+}
+
+enum SubscriptionPlan {
+  FREE
+  AN_NHIEN
+  BINH_AN
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  EXPIRED
+  CANCELED
+}
+
+model User {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  passwordHash  String?
+  name          String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  profile       Profile?
+  subscriptions Subscription[]
+  journalEntries JournalEntry[]
+}
+
+model Profile {
+  id            String    @id @default(cuid())
+  userId        String    @unique
+  user          User      @relation(fields: [userId], references: [id])
+  
+  gender        Gender
+  birthDate     DateTime
+  birthTime     String?   // HH:mm
+  birthLocation String?
+  energyType    Element?
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  charts        Chart[]
+}
+
+model Chart {
+  id          String   @id @default(cuid())
+  profileId   String
+  profile     Profile  @relation(fields: [profileId], references: [id])
+  
+  type        String   // e.g., "TzVi", "BatTu"
+  rawData     Json     // The raw calculation data
+  analysis    Json?    // Cached AI analysis
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Prediction {
+  id          String   @id @default(cuid())
+  chartId     String
+  chart       Chart    @relation(fields: [chartId], references: [id])
+  
+  category    String   // e.g., "Health", "Career", "Love"
+  content     String
+  targetDate  DateTime?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  journalEntries JournalEntry[]
+}
+
+model JournalEntry {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  
+  content       String
+  eventDate     DateTime
+  
+  predictionId  String?
+  prediction    Prediction? @relation(fields: [predictionId], references: [id])
+  
+  verification  String?  // AI's verification of the alignment
+  trustScore    Float?   // Impact on trust score
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Subscription {
+  id          String             @id @default(cuid())
+  userId      String
+  user        User               @relation(fields: [userId], references: [id])
+  
+  plan        SubscriptionPlan   @default(FREE)
+  status      SubscriptionStatus @default(ACTIVE)
+  
+  startDate   DateTime           @default(now())
+  endDate     DateTime?
+  
+  stripeId    String?            @unique
+  
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+}
