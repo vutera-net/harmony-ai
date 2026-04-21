@@ -167,6 +167,9 @@ importers:
       '@harmony/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@harmony/database':
+        specifier: workspace:*
+        version: link:../../packages/database
       '@harmony/tailwind-config':
         specifier: workspace:*
         version: link:../../packages/config-tailwind

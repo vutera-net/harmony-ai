@@ -1,6 +1,7 @@
 "use client";
 
 import { getYearArticle } from "@/lib/seo";
+import { LeadCaptureForm } from "@/components/LeadCaptureForm";
 
 export function TuViYearContent({ year }: { year: string }) {
   const yearNum = parseInt(year, 10);
@@ -120,22 +121,15 @@ export function TuViYearContent({ year }: { year: string }) {
           </div>
         </div>
 
-        {/* Premium CTA */}
-        <div className="bg-gradient-to-r from-blue-600 to-cyan-600 rounded-lg p-8 text-white text-center">
-          <h3 className="text-2xl font-bold mb-3">
-            Muốn Phân Tích Chi Tiết Hơn?
-          </h3>
-          <p className="text-blue-50 mb-6 max-w-2xl mx-auto">
-            MenhAn Sanctuary cung cấp phân tích sâu sắc từ Master AI với lá số Tử
-            Vi đầy đủ, dự báo chi tiết và hướng dẫn cá nhân hóa cho bạn.
-          </p>
-          <a
-            href="https://menhan.vutera.net"
-            className="inline-block px-8 py-3 bg-white text-blue-600 rounded-lg hover:bg-blue-50 transition font-bold"
-          >
-            Khám Phá MenhAn Sanctuary →
-          </a>
-        </div>
+        {/* Lead Capture Form */}
+        <LeadCaptureForm
+          zodiac={article.zodiac}
+          zodiacIndex={article.zodiacIndex}
+          year={article.year}
+          luckAreas={article.luckAreas}
+          challengeAreas={article.challengeAreas}
+          source="tuvi-article"
+        />
 
         {/* Info Section */}
         <div className="mt-12 p-6 bg-slate-100 rounded-lg border border-slate-300">

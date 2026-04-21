@@ -154,3 +154,16 @@ model Subscription {
   @@index([userId])
   @@index([status])
 }
+
+model Lead {
+  id        String   @id @default(cuid())
+  email     String
+  birthYear Int
+  zodiac    String
+  source    String   // e.g., "tuvi-article", "tuvi-home"
+  aiHook    String?
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([createdAt])
+}

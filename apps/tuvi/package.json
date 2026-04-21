@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@harmony/auth": "workspace:*",
+    "@harmony/database": "workspace:*",
     "@harmony/tailwind-config": "workspace:*",
     "chinese-lunar-calendar": "^1.0.1",
     "next": "16.2.4",
