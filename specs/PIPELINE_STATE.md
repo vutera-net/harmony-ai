@@ -89,121 +89,11 @@ phase_progress: "Phase 1: ✅ 100% | Phase 2: ✅ 100% | Phase 3: 🟡 In Progre
 
 - **Status**: `in_progress`
 - **Current Focus**: TASK-03-01 (Master AI Engine - Core)
-- **Snapshot Commit**: See commits below per task
 
-#### Phase 1 Summary (✅ DONE)
-- TASK-01-00 ✅ Project Scaffolding & Base Config | Commit: -
-- TASK-01-01 ✅ Core Database Schema | Commit: 3126d772
-- TASK-01-02 ✅ SSO Service | Commit: a1e0d454
-- TASK-01-03 ✅ Shared Auth Middleware | Commit: e337ff1e
-
-#### Phase 2 Summary (✅ DONE)
-- TASK-02-00 ✅ TuVi Scaffolding & Light UI | Commit: 6ccd9046
-- TASK-02-01 ✅ Quick Tools | Commit: defac681
-- TASK-02-02 ✅ Basic Chart Generator | Status: ✅ DONE
-- TASK-02-03 ✅ SEO Content Engine | Commit: e39c0096
-- TASK-02-04 ✅ Lead Capture & MenhAn Bridge | Commit: 7317e801
-
-#### Phase 3 Status (🟡 IN PROGRESS)
-- TASK-03-00 ✅ MenhAn Scaffolding & Zen UI | Status: ✅ DONE
-- TASK-03-01 🔄 Master AI Engine (Core) | Status: 🔄 IN PROGRESS
-- TASK-03-02 ⏳ Advanced Chart Analysis | Status: Pending
-- TASK-03-03 ⏳ Pay-per-view Implementation | Status: Pending
-
-**Architecture Decisions Made**:
-- pnpm workspaces + TurboRepo for monorepo
-- Shared Tailwind theme via `@harmony/tailwind-config` with CSS variables
-- Prisma ORM in `packages/database` shared across apps
-- JWT-based auth (HS256, 7-day expiration, HTTP-only cookies)
-- Deterministic Layer → AI Layer architecture for Master AI
-
-**Detailed task documentation**: See `specs/phases/phase-0X-*.md` for full breakdowns
-
----
-
-## 🎉 PHASE 2: TuVi App (Traffic Engine) - COMPLETE ✅
-
-All 5 tasks completed:
-- TASK-02-00 ✅ - Scaffolding & Light UI (Header, Hero, Grid, Footer, SEO basics)
-- TASK-02-01 ✅ - Quick Tools (4 pages: lucky days, calendar, chart, horoscope)
-- TASK-02-02 ✅ - Basic Chart Generator (12-palace Tử Vi chart with element classifications)
-- TASK-02-03 ✅ - SEO Content Engine (71 static pages /tu-vi/[year] optimized for Google)
-- TASK-02-04 ✅ - Lead Capture & MenhAn Bridge (email capture → AI Hook teaser → redirect)
-
-**Phase 2 Deliverables**:
-- 83 statically generated / properly routed pages
-- Lead capture system with deterministic AI Hook teaser
-- 71 SEO-optimized article pages for organic traffic
-- 4 interactive quick tools (calendar, lucky days, chart, horoscope)
-- Database schema for lead persistence
-- MenhAn bridge with context parameter passing
-
-**Next Phase**: Phase 03 - MenhAn Sanctuary MVP (Master AI engine, advanced chart analysis, Destiny Journal)
-
-- **TASK-02-03 Completion Summary** ✅:
-  - [x] Created dynamic route /tu-vi/[year] with SSG (71 pages: 1940-2010)
-  - [x] Implemented generateStaticParams() for all birth year combinations
-  - [x] Implemented generateMetadata() with per-year SEO optimization
-  - [x] Created lib/seo.ts with article content generators:
-    * getYearArticle(year) - Full article data per zodiac/year
-    * getZodiacSlug() / getSlugZodiac() - Bidirectional slug mapping
-    * Character/career/love/health descriptions per zodiac (12 × 4 descriptions)
-  - [x] Created TuViYearContent.tsx client component - Article display with:
-    * Breadcrumb navigation
-    * H1 hero with zodiac badge
-    * H2 sections: Tính Cách, Sự Nghiệp, Tình Cảm, Sức Khỏe, Dự Báo
-    * Sidebar: Lucky colors, numbers, luck areas, challenge areas
-  - [x] Created PageContent.tsx client wrapper - Auth/Header/Footer boundary
-  - [x] Created /tu-vi index page - Lists all birth years grouped by decade
-  - [x] Updated sitemap.ts - Added /tu-vi + all 71 year routes
-  - [x] Updated robots.txt - Explicit Allow: /tu-vi/ crawling
-  - [x] SEO metadata per page:
-    * Title: "Tử Vi Năm Sinh {year} - Người Tuổi {Zodiac} {currentYear}"
-    * Meta description: Targeting "tử vi năm sinh {year}" keywords
-    * Keywords: Multi-variant search terms per year/zodiac
-    * OpenGraph: Title, description, image, type=article, siteName
-    * JSON-LD: Article schema with author, publisher, datePublished
-  - [x] Build successful: 82 static pages generated (71 year + 1 index + 4 tools + 6 core)
-  - [x] Route optimization: All /tu-vi/[year] marked as ● (SSG) - fully static
-  - [x] Zero TypeScript errors, proper types in all functions
-  - **Commit**: e39c0096 (TASK-02-03: SEO Content Engine Setup)
-
-- **TASK-02-01 Completion Summary** ✅:
-  - [x] Integrated chinese-lunar-calendar library (v1.0.1) with getLunar API
-  - [x] Implemented toLunarDate() - Solar to lunar date conversion
-  - [x] Implemented calculateDayLuck() - Luck level calculation (Tốt/Trung bình/Xấu) per zodiac
-  - [x] Implemented findLuckyDaysInMonth() - Filter lucky days in a month
-  - [x] Implemented getZodiacIndex() - Birth year to zodiac mapping (12-year cycle)
-  - [x] Implemented formatZodiac() - Zodiac animal name formatting
-  - [x] Implemented getMonthCalendarView() - Monthly calendar grid with lunar dates and luck status
-  - [x] Implemented getBasicChart() - Basic Tử Vi chart generation with 12 houses
-  - [x] Implemented getYearlyHoroscope() - Yearly horoscope summary per zodiac animal
-  - [x] Created LuckyDaysCalculator component - Interactive lucky day finder UI
-  - [x] Created HourlyAuspicious component - Auspicious/inauspicious hours display
-  - [x] Built /tools/lucky-days page - Find lucky days in a month
-  - [x] Built /tools/calendar page - Monthly lunar calendar viewer with color-coded luck
-  - [x] Built /tools/basic-chart page - Basic Tử Vi chart viewer
-  - [x] Built /tools/horoscope page - Yearly horoscope with lucky colors and numbers
-  - [x] Created TypeScript type declarations for chinese-lunar-calendar module
-  - [x] Wrote 12 unit tests for calendar utilities (toLunarDate, calculateDayLuck, findLuckyDaysInMonth, etc.)
-  - [x] Responsive design (mobile-first, 1→2→4 column grids)
-  - [x] Vietnamese localization (UI, labels, descriptions)
-  - [x] SEO optimization (metadata, structured data, sitemap integration)
-  - [x] All 4 apps build successfully with no errors
-  - **Commit**: defac681 (TASK-02-01: Implement Quick Tools - Full Suite)
-
-- **TASK-01-03 Completion Summary** ✅:
-  - [x] Created @harmony/auth shared package
-  - [x] Middleware factory (createAuthMiddleware) for per-app route protection
-  - [x] React Context + AuthProvider for global state management
-  - [x] Client hooks: useAuth(), useProtectedRoute(), logout(), login(), register()
-  - [x] ProtectedRoute component wrapper for protected content
-  - [x] API proxy endpoints (/api/auth/me) in all apps
-  - [x] Middleware configured for TuVi (public), Harmony (mixed), MenhAn (protected)
-  - [x] Comprehensive documentation + middleware template
-  - [x] Automatic redirect to id.vutera.net/auth/login for unauthorized users
-  - [x] Token verification via .vutera.net domain-scoped cookies
-  - **Commit**: e337ff1e (TASK-01-03: Implement Shared Auth Middleware & Context)
+**For detailed task status & completion details**: 👉 See `specs/phases/phase-0X-*.md`
+- `phase-01-foundation.md` - Phase 1 (✅ DONE)
+- `phase-02-tuvi-app.md` - Phase 2 (✅ DONE)
+- `phase-03-menhan-mvp.md` - Phase 3 (🟡 IN PROGRESS)
 
 
 ---
@@ -222,13 +112,15 @@ All 5 tasks completed:
 
 > Nếu conversation mới, đọc phần này để tiếp tục đúng chỗ.
 
-**Trạng thái hiện tại**: `current_step` = `0-validate`
+**Trạng thái hiện tại**: `current_step` = `4-execute` | Phase 3 🟡 IN PROGRESS
 
 **Để tiếp tục**:
-1. Đọc output file của bước cuối cùng đã hoàn thành (xem Step History ở trên)
-2. Tóm tắt lại cho người dùng: "Chúng ta đang ở Bước X, đã hoàn thành [Y]. Tiếp tục từ [Z]?"
-3. Chờ xác nhận trước khi proceed
+1. Đọc `specs/phases/phase-03-menhan-mvp.md` để xem tất cả tasks
+2. Focus vào **TASK-03-01: Master AI Engine (Core)** - đang trong tiến hành
+3. Chờ xác nhận từ người dùng trước khi proceed
 
 **Context cần nhớ**:
-- Xây dựng 3 sản phẩm: Harmony Landing, TuVi App, MenhAn App.
-- Theo sát Master Plan trong specs/draft.md.
+- Xây dựng 3 sản phẩm: Harmony Landing, TuVi App, MenhAn App
+- Phase 1 & 2 hoàn thành 100% ✅
+- Phase 3 cần hoàn thành: Master AI Engine, Advanced Charts, Destiny Journal, Paywall
+- Theo sát Master Plan trong specs/ và CLAUDE.md
