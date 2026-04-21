@@ -12,7 +12,7 @@
     "@harmony/database": "workspace:*",
     "@harmony/tailwind-config": "workspace:*",
     "bcryptjs": "^2.4.3",
-    "jsonwebtoken": "^9.1.2",
+    "jsonwebtoken": "^9.0.3",
     "next": "16.2.4",
     "react": "19.2.4",
     "react-dom": "19.2.4",
