@@ -9,10 +9,10 @@ pipeline_id: "harmony-ecosystem-2026-04-20"
 flow_type: "CREATE"
 stack: "Next.js 16 + TypeScript + PostgreSQL + Prisma + Claude/GPT-4"
 started_at: "2026-04-20T00:00:00"
-last_updated: "2026-04-21T13:35:00"
-current_step: "4-execute (Phase 2: TASK-02-03 completed, TASK-02-04 ready)"
+last_updated: "2026-04-21T14:00:00"
+current_step: "4-execute (Phase 2: ✅ COMPLETE, Phase 3 ready)"
 plan_mode: "phased"
-phase_progress: "Phase 1: ✅ 100% | Phase 2: 3/5 done (TASK-02-00 ✅, TASK-02-01 ✅, TASK-02-03 ✅)"
+phase_progress: "Phase 1: ✅ 100% | Phase 2: ✅ 100% (5/5 complete) | Phase 3: Ready to start"
 ```
 
 ---
@@ -136,6 +136,59 @@ phase_progress: "Phase 1: ✅ 100% | Phase 2: 3/5 done (TASK-02-00 ✅, TASK-02-
   - [x] Smooth hover effects + transitions
   - [x] Performance optimized (emoji icons, minimal CSS)
   - **Commit**: 6ccd9046 (TASK-02-00: TuVi App Scaffolding & Light UI)
+
+- **TASK-02-04 Completion Summary** ✅:
+  - [x] Add Lead model to Prisma schema (email, birthYear, zodiac, source, aiHook, timestamps)
+  - [x] Run prisma db push + prisma generate to sync PostgreSQL schema
+  - [x] Create lib/leadgen.ts:
+    * generateAIHook() - 12 personalized teaser templates per zodiac
+    * buildMenhAnUrl() - MenhAn redirect with UTM params (zodiac slug, year, source)
+    * isValidEmail() - Email format validation
+  - [x] Create POST /api/leads endpoint:
+    * Validates email + birth year
+    * Generates AI Hook deterministically
+    * Saves lead to DB with graceful degradation
+    * Returns { aiHook, redirectUrl } for immediate client redirect
+  - [x] Create LeadCaptureForm.tsx - Two-state client component:
+    * State 1: Form (email + birth year inputs)
+    * State 2: Hook reveal (teaser text + redirect button)
+    * Submits to /api/leads, displays AI Hook, then redirects
+  - [x] Convert Hero.tsx to client component:
+    * Inject LeadCaptureForm below trust indicators
+    * source="tuvi-home" for homepage lead tracking
+    * Dynamic zodiac derivation from user-entered birth year
+  - [x] Update TuViYearContent.tsx:
+    * Replace static Premium CTA with LeadCaptureForm
+    * Pre-fill zodiac, year, luck areas from article context
+    * source="tuvi-article" for SEO article lead tracking
+  - [x] MenhAn redirect URL with context params:
+    * Format: https://menhan.vutera.net?zodiac={slug}&year={birthYear}&currentYear={year}&ref=tuvi&utm_source=tuvi&utm_medium=lead-form&utm_campaign={source}
+    * Preserves zodiac and birth year for MenhAn onboarding
+  - [x] @harmony/database dependency added to tuvi app
+  - [x] Build successful: 83 routes (1 new API + 71 articles + 4 tools + 7 core)
+  - [x] Zero TypeScript errors, all types generated
+  - **Commit**: 7317e801 (TASK-02-04: Lead Capture & MenhAn Bridge)
+
+---
+
+## 🎉 PHASE 2: TuVi App (Traffic Engine) - COMPLETE ✅
+
+All 5 tasks completed:
+- TASK-02-00 ✅ - Scaffolding & Light UI (Header, Hero, Grid, Footer, SEO basics)
+- TASK-02-01 ✅ - Quick Tools (4 pages: lucky days, calendar, chart, horoscope)
+- TASK-02-02 ✅ - Basic Chart Generator (12-palace Tử Vi chart with element classifications)
+- TASK-02-03 ✅ - SEO Content Engine (71 static pages /tu-vi/[year] optimized for Google)
+- TASK-02-04 ✅ - Lead Capture & MenhAn Bridge (email capture → AI Hook teaser → redirect)
+
+**Phase 2 Deliverables**:
+- 83 statically generated / properly routed pages
+- Lead capture system with deterministic AI Hook teaser
+- 71 SEO-optimized article pages for organic traffic
+- 4 interactive quick tools (calendar, lucky days, chart, horoscope)
+- Database schema for lead persistence
+- MenhAn bridge with context parameter passing
+
+**Next Phase**: Phase 03 - MenhAn Sanctuary MVP (Master AI engine, advanced chart analysis, Destiny Journal)
 
 - **TASK-02-03 Completion Summary** ✅:
   - [x] Created dynamic route /tu-vi/[year] with SSG (71 pages: 1940-2010)
