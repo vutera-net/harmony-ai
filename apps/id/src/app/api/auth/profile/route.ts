@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
       validation.data;
 
     // Prepare update data (only include provided fields)
-    const updateData: any = {};
+    const updateData: Record<string, any> = {};
     if (fullName !== undefined) updateData.fullName = fullName;
     if (gender !== undefined) updateData.gender = gender;
     if (birthDate !== undefined) updateData.birthDate = new Date(birthDate);
