@@ -61,13 +61,34 @@ Start all applications in development mode:
 pnpm dev
 ```
 
-**Default Ports:**
+### Configuring Fixed Ports
+To avoid random ports during development and ensure SSO configuration works, update the `dev` scripts in each app's `package.json` (e.g., `"dev": "next dev -p 3000"`).
+
+**Recommended Ports:**
 - Identity: `http://localhost:3000`
 - MenhAn: `http://localhost:3001`
 - Harmony: `http://localhost:3002`
 - TuVi: `http://localhost:3003`
 
-## 3. Deployment to Vercel
+Then start all applications:
+```bash
+pnpm dev
+```
+
+## 3. Local Production Build
+
+To verify the production build locally before deploying:
+
+```bash
+# Build all apps
+pnpm build
+
+# To build a specific app
+pnpm build --filter [app-name]
+```
+Note: After building, you can test the production version of an app by navigating to its directory and running `pnpm start`.
+
+## 4. Deployment to Vercel
 
 Since this is a monorepo, you must create 4 separate projects on Vercel (one for each app).
 
@@ -106,3 +127,20 @@ Map your production domains to the corresponding Vercel projects:
 - `harmony.vutera.net` $\rightarrow$ `harmony` project
 - `tuvi.vutera.net` $\rightarrow$ `tuvi` project
 - `menhan.vutera.net` $\rightarrow$ `menhan` project
+
+**Note on Domains:** Domains are managed via environment variables (`NEXT_PUBLIC_SSO_URL`). To use different domains for staging (STG) or other environments, simply update these variables in the Vercel Dashboard.
+
+## 5. Troubleshooting
+
+### Turbopack / Build Panics
+If you encounter an "Unexpected Turbopack error" or "panic" during development or build:
+1. Stop the development server.
+2. Clear the Next.js cache for the affected app(s):
+   ```bash
+   rm -rf apps/[app-name]/.next
+   ```
+   Or clear all caches:
+   ```bash
+   rm -rf apps/**/.next
+   ```
+3. Restart the server: `pnpm dev`.
