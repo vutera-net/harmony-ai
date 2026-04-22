@@ -14,7 +14,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="vi">
+    <html lang="vi" suppressHydrationWarning>
       <body className="min-h-screen antialiased selection:bg-harmony-gold/30 flex flex-col">
         <AuthProvider>
           <BrandHeader 
