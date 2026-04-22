@@ -10,18 +10,25 @@ const SSO_URL = process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3000";
 const db = new PrismaClient();
 
 /**
- * Fetch user's profile from SSO service or local DB
+ * Fetch user's profile and premium status
  */
-async function getUserProfile(userId: string | null) {
-  if (!userId) return null;
-
+async function getUserContext(userId: string) {
   try {
     const profile = await db.profile.findUnique({
       where: { userId },
     });
-    return profile || null;
+    const subscription = await db.subscription.findFirst({
+      where: { userId },
+    });
+    const journalEntries = await db.journalEntry.findMany({
+      where: { userId },
+      orderBy: { eventDate: "desc" },
+      take: 10,
+    });
+
+    return { profile, subscription, journalEntries };
   } catch (error) {
-    console.error("Error fetching profile:", error);
+    console.error("Error fetching user context:", error);
     return null;
   } finally {
     await db.$disconnect();
@@ -33,19 +40,14 @@ export async function POST(req: NextRequest) {
     const { messages } = await req.json();
 
     if (!messages || messages.length === 0) {
-      return NextResponse.json(
-        { error: "No messages provided" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "No messages provided" }, { status: 400 });
     }
 
-    // Try to get user's profile for context
-    let chartContext = "";
+    let systemContext = "";
     const token = getTokenFromRequest(req);
 
     if (token) {
       try {
-        // Fetch user from SSO
         const ssoResponse = await fetch(`${SSO_URL}/api/auth/me`, {
           headers: { Cookie: `auth_token=${token}` },
         });
@@ -55,48 +57,65 @@ export async function POST(req: NextRequest) {
           const userId = userData.user?.id;
 
           if (userId) {
-            // PAY-PER-VIEW CHECK:
-            // For detailed reports or specific high-value queries, check access
-            const isDetailedQuery = messages.some((m: { content: string }) => 
-              m.content.toLowerCase().includes("chi tiết") || 
-              m.content.toLowerCase().includes("chuyên sâu")
-            );
+            const context = await getUserContext(userId);
+            if (context) {
+              const { profile, subscription, journalEntries } = context;
+              
+              // 1. Base Chart Context
+              if (profile) {
+                const ctx = buildChartContext(profile);
+                systemContext = formatChartForPrompt(ctx);
+              }
 
-            if (isDetailedQuery) {
-              const hasAccess = await PaymentService.checkAccess(userId, `chart_${userId}_analysis`);
-              if (!hasAccess) {
-                return NextResponse.json({ 
-                  error: "PAYWALL", 
-                  message: "Vui lòng nâng cấp gói hoặc thanh toán một lần để mở khóa luận giải chuyên sâu.",
-                  featureId: `chart_${userId}_analysis`,
-                  amount: 50000 // 50,000 VND
-                }, { status: 402 });
+              // 2. Premium AI Coach Enhancements
+              const isPremium = subscription?.plan !== "FREE";
+              if (isPremium) {
+                const memory = profile?.aiMemory as any || {};
+                const historySummary = journalEntries.map(e => 
+                  `Event on ${e.eventDate.toISOString().split('T')[0]}: ${e.content} (Status: ${e.status})`
+                ).join("\n");
+
+                systemContext += `\n\n[AI COACH MODE ACTIVE - PREMIUM]\n`;
+                systemContext += `User Long-term Memory: ${JSON.stringify(memory)}\n`;
+                systemContext += `Recent Destiny Events:\n${historySummary}\n`;
+                systemContext += `Specialized Knowledge: You now have access to Bát Trạch and Cửu Cung analysis. When discussing home or office layout, use these principles to provide precise guidance.`;
               }
             }
-
-            const profile = await getUserProfile(userId);
-            if (profile) {
-              const ctx = buildChartContext(profile);
-              chartContext = formatChartForPrompt(ctx);
-            }
           }
+        }
+      } catch (error) {
+        console.error("Error enhancing context:", error);
+      }
     }
-  } catch (error) {
-    console.error("Error fetching user context:", error);
-  }
-}
 
-    // Build system prompt with or without user context
-
-    const systemPrompt = buildSystemPrompt(
-      chartContext ||
-      `[Người dùng chưa hoàn thành hồ sơ lá số. Bạn sẽ trò chuyện dựa trên kinh nghiệm chung mà không có context cá nhân.]`
+    // Detailed query paywall check
+    const isDetailedQuery = messages.some((m: any) => 
+      m.content.toLowerCase().includes("chi tiết") || 
+      m.content.toLowerCase().includes("chuyên sâu")
     );
 
-    // Get AI Provider based on config
+    if (isDetailedQuery && token) {
+       // Simplified check for this demo: if not premium, trigger paywall
+       const userId = (await (await fetch(`${SSO_URL}/api/auth/me`, {
+         headers: { Cookie: `auth_token=${token}` },
+       })).json()).user?.id;
+       
+       const sub = await db.subscription.findFirst({ where: { userId } });
+       if (sub?.plan === "FREE") {
+         return NextResponse.json({ 
+           error: "PAYWALL", 
+           message: "Vui lòng nâng cấp gói để mở khóa luận giải chuyên sâu.",
+           featureId: `chart_${userId}_analysis`,
+           amount: 50000 
+         }, { status: 402 });
+       }
+    }
+
+    const systemPrompt = buildSystemPrompt(
+      systemContext || `[Người dùng chưa hoàn thành hồ sơ lá số. Bạn sẽ trò chuyện dựa trên kinh nghiệm chung.]`
+    );
+
     const provider = getAIProvider();
-    
-    // Convert messages to provider format
     const aiMessages: AIMessage[] = messages.map((msg: any) => ({
       role: msg.role === "system" ? "system" : (msg.role === "assistant" ? "assistant" : "user"),
       content: msg.content,
@@ -114,9 +133,8 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     console.error("Chat API error:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  } finally {
+    await db.$disconnect();
   }
 }

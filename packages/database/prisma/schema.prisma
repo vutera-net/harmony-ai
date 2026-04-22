@@ -67,6 +67,8 @@ model Profile {
   birthTimezone String?   // IANA timezone (e.g., "Asia/Ho_Chi_Minh")
   birthLocation String?   // City/Province
   energyType    Element?  // Primary element (Wu Xing)
+  aiMemory      Json?     // AI's long-term memory/insights about the user
+
 
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
