@@ -49,9 +49,14 @@ DATABASE_URL=postgresql://user:password@localhost:5432/harmony
 - `DATABASE_URL`: PostgreSQL connection string (menhan only)
 
 ### Database Setup
-Initialize the database using Prisma:
+Initialize the database using the database package scripts:
 ```bash
-pnpm --filter @harmony/database prisma migrate dev
+# Generate Prisma Client and apply migrations
+pnpm --filter @harmony/database db:generate db:migrate
+```
+To view the database in a GUI:
+```bash
+pnpm --filter @harmony/database db:studio
 ```
 
 ## 2. Running Locally
@@ -99,6 +104,11 @@ For each project (`id`, `harmony`, `tuvi`, `menhan`):
 2. **Build Command**: `cd ../.. && pnpm build --filter=[app-name]`
 3. **Install Command**: `pnpm install`
 4. **Framework Preset**: `Next.js`
+
+**Crucial Database Step for `menhan` project:**
+The `menhan` app depends on the database package. Ensure the Prisma Client is generated during the build:
+- Add `pnpm --filter @harmony/database db:generate` to your build pipeline or 
+- Update the build command to: `cd ../.. && pnpm --filter @harmony/database db:generate && pnpm --filter @harmony/database build --filter=[app-name]`
 
 ### Environment Variables
 Configure the following in Vercel Dashboard for each project:
