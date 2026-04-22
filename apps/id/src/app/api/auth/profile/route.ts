@@ -55,11 +55,26 @@ export async function POST(request: NextRequest) {
     if (birthLocation !== undefined) updateData.birthLocation = birthLocation;
 
     // Upsert profile
+    const existingProfile = await prisma.profile.findUnique({
+      where: { userId: payload.userId },
+    });
+
+    if (!existingProfile && (!gender || !birthDate)) {
+      return NextResponse.json(
+        {
+          error: "Profile not found and required fields (gender, birthDate) are missing for creation",
+        },
+        { status: 400 }
+      );
+    }
+
     const profile = await prisma.profile.upsert({
       where: { userId: payload.userId },
       update: updateData,
       create: {
         userId: payload.userId,
+        gender: gender || "MALE", // Fallback if not provided but exists in DB (though we checked above)
+        birthDate: birthDate ? new Date(birthDate) : new Date(), // Fallback
         ...updateData,
       },
     });

@@ -22,16 +22,17 @@ async function getUserId(req: NextRequest) {
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const userId = await getUserId(req);
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
+    
     const journalEntry = await db.journalEntry.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!journalEntry || journalEntry.userId !== userId) {

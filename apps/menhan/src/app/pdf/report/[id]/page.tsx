@@ -85,7 +85,7 @@ export default async function PDFReportPage({ params }: { params: { id: string }
         Vận mệnh nằm trong tay bạn, hãy dùng trí tuệ để dẫn lối.
       </footer>
 
-      <style jsx global>{`
+      <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500&display=swap');
         
         .pdf-container {
