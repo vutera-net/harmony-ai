@@ -1,14 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import Anthropic from "@anthropic-ai/sdk";
 import { getTokenFromRequest } from "@harmony/auth/middleware";
 import { PrismaClient } from "@harmony/database";
 import { buildChartContext, formatChartForPrompt } from "@/lib/chart-context";
 import { buildSystemPrompt } from "@/lib/master-ai-prompt";
+import { getAIProvider, AIMessage } from "@harmony/ai-provider";
 
 const SSO_URL = process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3000";
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
 const db = new PrismaClient();
 
 /**
@@ -30,18 +27,6 @@ async function getUserProfile(userId: string | null) {
   }
 }
 
-/**
- * Convert Next.js request to Anthropic message format
- */
-function formatMessages(
-  messages: Array<{ role: string; content: string }>
-): Array<{ role: "user" | "assistant"; content: string }> {
-  return messages.map((msg) => ({
-    role: msg.role as "user" | "assistant",
-    content: msg.content,
-  }));
-}
-
 export async function POST(req: NextRequest) {
   try {
     const { messages } = await req.json();
@@ -59,7 +44,6 @@ export async function POST(req: NextRequest) {
 
     if (token) {
       try {
-        // Fetch user from SSO
         const ssoResponse = await fetch(`${SSO_URL}/api/auth/me`, {
           headers: { Cookie: `auth_token=${token}` },
         });
@@ -87,40 +71,17 @@ export async function POST(req: NextRequest) {
       `[Người dùng chưa hoàn thành hồ sơ lá số. Bạn sẽ trò chuyện dựa trên kinh nghiệm chung mà không có context cá nhân.]`
     );
 
-    // Stream response from Claude
-    const stream = new ReadableStream({
-      async start(controller) {
-        try {
-          const encoder = new TextEncoder();
-          const response = await anthropic.messages.stream({
-            model: "claude-haiku-4-5-20251001",
-            max_tokens: 2048,
-            system: systemPrompt,
-            messages: formatMessages(messages),
-          });
+    // Get AI Provider based on config
+    const provider = getAIProvider();
+    
+    // Convert messages to provider format
+    const aiMessages: AIMessage[] = messages.map((msg: any) => ({
+      role: msg.role === "system" ? "system" : (msg.role === "assistant" ? "assistant" : "user"),
+      content: msg.content,
+    }));
 
-          for await (const chunk of response) {
-            if (
-              chunk.type === "content_block_delta" &&
-              chunk.delta.type === "text_delta"
-            ) {
-              const text = chunk.delta.text;
-              controller.enqueue(encoder.encode(text));
-            }
-          }
-
-          controller.close();
-        } catch (error) {
-          console.error("Streaming error:", error);
-          const encoder = new TextEncoder();
-          controller.enqueue(
-            encoder.encode(
-              "\n\n[Xin lỗi, có lỗi khi xử lý câu hỏi của bạn. Vui lòng thử lại.]"
-            )
-          );
-          controller.close();
-        }
-      },
+    const stream = await provider.generateResponse(systemPrompt, aiMessages, {
+      maxTokens: 2048,
     });
 
     return new NextResponse(stream, {
