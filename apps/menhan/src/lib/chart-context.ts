@@ -1,5 +1,6 @@
 import { Profile, Element } from "@harmony/database";
 import { getLunar } from "chinese-lunar-calendar";
+import { calculateMenhCung, distributeStars, StarDistribution } from "./astrology-engine";
 
 // Heavenly Stems (Thiên Can)
 const heavenlyStems = [
@@ -72,7 +73,9 @@ export interface ChartContext {
     name: string;
     element: string;
     description: string;
+    stars: string[];
   }>;
+  starDistribution: StarDistribution;
   summary: string;
 }
 
@@ -85,6 +88,15 @@ export function buildChartContext(profile: Profile): ChartContext {
   const year = birthDate.getFullYear();
   const month = birthDate.getMonth() + 1;
   const day = birthDate.getDate();
+  
+  // Calculate birth hour as integer (1-12)
+  let hour = 1;
+  if (profile.birthTime) {
+    const [h, m] = profile.birthTime.split(":").map(Number);
+    // Map 24h to 12h (Tý=1, Sửu=2...)
+    hour = Math.floor(h / 2) + 1;
+    if (hour > 12) hour = 1;
+  }
 
   // Get lunar calendar data
   const lunar = getLunar(year, month, day);
@@ -102,8 +114,12 @@ export function buildChartContext(profile: Profile): ChartContext {
     ? elementVN[profile.energyType as Element]
     : derivePrimaryElement(stemIndex);
 
-  // Generate 12 palaces with element rotation
-  const palaces = generatePalaces(branchIndex, element);
+  // Advanced Astrology Calculation
+  const menhCung = calculateMenhCung(month, hour);
+  const starDistribution = distributeStars(menhCung, day, month);
+
+  // Generate 12 palaces with element rotation and assigned stars
+  const palaces = generatePalaces(branchIndex, element, starDistribution);
 
   // Generate summary text
   const summary = generateZodiacSummary(zodiac, earthlyBranch, element);
@@ -121,6 +137,7 @@ export function buildChartContext(profile: Profile): ChartContext {
     earthlyBranch,
     element,
     palaces,
+    starDistribution,
     summary,
   };
 }
@@ -146,11 +163,12 @@ function derivePrimaryElement(stemIndex: number): string {
 }
 
 /**
- * Generate 12 palaces with elements
+ * Generate 12 palaces with elements and stars
  */
 function generatePalaces(
   branchIndex: number,
-  primaryElement: string
+  primaryElement: string,
+  stars: StarDistribution
 ): ChartContext["palaces"] {
   const elements = ["Kim", "Mộc", "Thủy", "Hỏa", "Thổ"];
   const descriptions: Record<string, string> = {
@@ -175,6 +193,7 @@ function generatePalaces(
       name,
       element: palaceElement,
       description: descriptions[name] || "",
+      stars: stars[name] || [],
     };
   });
 }
@@ -203,13 +222,14 @@ function generateZodiacSummary(zodiac: string, branch: string, element: string):
 
 /**
  * Format chart context into readable string for system prompt
+ * Now including detailed star distribution
  */
 export function formatChartForPrompt(ctx: ChartContext): string {
   const palaceList = ctx.palaces
-    .map((p) => `• ${p.name} (${p.element}): ${p.description}`)
+    .map((p) => `• ${p.name} (${p.element}): ${p.description} | Chính tinh: ${p.stars.join(", ") || "Không có"}`)
     .join("\n");
 
-  return `=== LÁ SỐ CÁ NHÂN ===
+  return `=== LÁ SỐ CHUYÊN SÂU ===
 Tên: ${ctx.name || "Người dùng"}
 Giới tính: ${ctx.gender}
 Ngày sinh: ${ctx.birthDay}/${ctx.birthMonth}/${ctx.birthYear}
@@ -222,6 +242,6 @@ Ngũ Hành Chủ: ${ctx.element}
 TÓM TẮT TÍNH CÁCH:
 ${ctx.summary}
 
-12 CỰ TỬ VI:
+CHI TIẾT CÁC CUNG VÀ CHÍNH TINH:
 ${palaceList}`;
 }

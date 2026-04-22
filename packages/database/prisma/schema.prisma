@@ -32,6 +32,13 @@ enum SubscriptionStatus {
   CANCELED
 }
 
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
 model User {
   id            String         @id @default(cuid())
   email         String         @unique
@@ -42,9 +49,11 @@ model User {
   profile       Profile?
   subscriptions Subscription[]
   journalEntries JournalEntry[]
-
+  payments       Payment[]
+  
   @@index([email])
 }
+
 
 model Profile {
   id            String    @id @default(cuid())
@@ -153,6 +162,27 @@ model Subscription {
 
   @@index([userId])
   @@index([status])
+}
+
+model Payment {
+  id                    String        @id @default(cuid())
+  userId                String
+  user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  amount                Float
+  currency              String        @default("VND")
+  status                PaymentStatus @default(PENDING)
+  provider              String        // e.g., "stripe", "vnpay", "momo"
+  providerTransactionId String?       @unique
+  
+  featureId             String        // e.g., "chart_id_analysis", "pdf_report_id"
+  
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([featureId])
 }
 
 model Lead {

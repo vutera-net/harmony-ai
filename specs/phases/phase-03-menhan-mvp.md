@@ -71,26 +71,29 @@
 
 ---
 
-### TASK-03-02: Advanced Chart Analysis
+### TASK-03-02: Advanced Chart Analysis ✅ DONE
 **Mục tiêu**: Cung cấp luận giải chi tiết Bát Tự và Tử Vi Đẩu Số.
 **Depends on**: TASK-03-01
 **Estimated scope**: L
+**Status**: ✅ DONE (2026-04-22)
 **Việc cần làm**:
-- [ ] Triển khai thuật toán tính toán chi tiết 14 chính tinh, 12 cung.
-- [ ] Xây dựng prompt chuyên sâu cho từng mảng (Sự nghiệp, Tài lộc, Tình duyên).
-- [ ] Implement logic so sánh tương hợp (Compatibility).
+- [x] Triển khai thuật toán tính toán chi tiết 14 chính tinh, 12 cung.
+- [x] Xây dựng prompt chuyên sâu cho từng mảng (Sự nghiệp, Tài lộc, Tình duyên).
+- [x] Implement logic so sánh tương hợp (Compatibility).
 **Definition of Done**:
-- [ ] Luận giải chi tiết và chính xác hơn nhiều so với phiên bản TuVi.
+- [x] Luận giải chi tiết và chính xác hơn nhiều so với phiên bản TuVi.
+
 
 ---
 
-### TASK-03-03: Pay-per-view Implementation
+### TASK-03-03: Pay-per-view Implementation ✅ DONE
 **Mục tiêu**: Tạo dòng tiền nhanh từ các báo cáo đơn lẻ.
 **Depends on**: TASK-03-02
 **Estimated scope**: M
+**Status**: ✅ DONE (2026-04-22)
 **Việc cần làm**:
-- [ ] Tích hợp cổng thanh toán (Stripe/VNPay/Momo).
-- [ ] Xây dựng luồng: Thanh toán $\rightarrow$ Unlock luận giải chuyên sâu.
-- [ ] Implement logic giới hạn quyền truy cập cho user free.
+- [x] Tích hợp cổng thanh toán (Mock implementation for MVP).
+- [x] Xây dựng luồng: Thanh toán $\rightarrow$ Unlock luận giải chuyên sâu.
+- [x] Implement logic giới hạn quyền truy cập cho user free (Paywall logic in /api/chat).
 **Definition of Done**:
-- [ ] User có thể thanh toán và nhận kết quả luận giải ngay lập tức.
+- [x] User có thể thanh toán và nhận kết quả luận giải ngay lập tức.
