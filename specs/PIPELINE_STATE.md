@@ -88,8 +88,8 @@ phase_progress: "Phase 1: ✅ 100% | Phase 2: ✅ 100% | Phase 3: ✅ 100% | Pha
 ### Step 4: Execution *(nếu đang làm)*
 
 - **Status**: `in_progress`
-- **Latest**: TASK-04-00 ✅ DONE (2026-04-22) | Implement Destiny Journal (API & UI)
-- **Next**: TASK-04-01 (PDF Art Report Generator)
+- **Latest**: TASK-04-01 ✅ DONE (2026-04-22) | Implement PDF Art Report Generator
+- **Next**: TASK-04-02 (Subscription System & Advanced Payment)
 
 **For detailed task status & completion details**: 👉 See `specs/phases/phase-0X-*.md`
 - `phase-01-foundation.md` - Phase 1 (✅ DONE)
