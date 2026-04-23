@@ -172,7 +172,7 @@ All apps using `@harmony/auth` should have:
 
 ```bash
 # .env.local
-NEXT_PUBLIC_SSO_URL=http://localhost:3000        # Dev
+NEXT_PUBLIC_SSO_URL=http://localhost:4000        # Dev
 # NEXT_PUBLIC_SSO_URL=https://id.vutera.net      # Prod
 ```
 

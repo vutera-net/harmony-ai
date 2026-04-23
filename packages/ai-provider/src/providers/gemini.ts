@@ -15,21 +15,26 @@ export class GeminiProvider implements AILayerProvider {
     options = { maxTokens: 2048, temperature: 0.7 }
   ): Promise<ReadableStream<Uint8Array>> {
     const model = this.genAI.getGenerativeModel({
-      model: "gemini-1.5-pro",
+      model: "gemma-4-31b-it",
       systemInstruction: systemPrompt,
     });
 
-    const history = messages
-      .filter(m => m.role !== "system")
+    const filteredMessages = messages.filter(m => m.role !== "system");
+    
+    // Gemini history must start with a 'user' role message
+    const firstUserIndex = filteredMessages.findIndex(m => m.role === "user");
+    const validMessages = firstUserIndex === -1 
+      ? [] 
+      : filteredMessages.slice(firstUserIndex);
+
+    const history = validMessages
       .slice(0, -1)
       .map(m => ({
         role: m.role === "assistant" ? "model" : "user",
         parts: [{ text: m.content }],
       }));
 
-    const lastMessage = messages
-      .filter(m => m.role !== "system")
-      .pop()?.content || "";
+    const lastMessage = validMessages.pop()?.content || "";
 
     return new ReadableStream({
       start: async (controller) => {

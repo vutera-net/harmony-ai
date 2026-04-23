@@ -41,7 +41,7 @@ export const config = {
 1. Copy middleware code to your app's root `middleware.ts`
 2. Add `NEXT_PUBLIC_SSO_URL` to `.env.local`:
    ```
-   NEXT_PUBLIC_SSO_URL=http://localhost:3000
+   NEXT_PUBLIC_SSO_URL=http://localhost:4000
    # Or in production:
    # NEXT_PUBLIC_SSO_URL=https://id.vutera.net
    ```

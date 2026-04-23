@@ -24,19 +24,19 @@ NEXT_PUBLIC_API_URL=http://localhost:3000
 
 **`apps/tuvi/.env.local`** (TuVi App):
 ```
-NEXT_PUBLIC_SSO_URL=http://localhost:3000
+NEXT_PUBLIC_SSO_URL=http://localhost:4000
 NODE_ENV=development
 ```
 
 **`apps/harmony/.env.local`** (Harmony Hub):
 ```
-NEXT_PUBLIC_SSO_URL=http://localhost:3000
+NEXT_PUBLIC_SSO_URL=http://localhost:4000
 NODE_ENV=development
 ```
 
 **`apps/menhan/.env.local`** (MenhAn Sanctuary):
 ```
-NEXT_PUBLIC_SSO_URL=http://localhost:3000
+NEXT_PUBLIC_SSO_URL=http://localhost:4000
 NODE_ENV=development
 ANTHROPIC_API_KEY=sk-ant-your-actual-anthropic-key
 DATABASE_URL=postgresql://user:password@localhost:5432/harmony
