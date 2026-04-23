@@ -1,6 +1,7 @@
 import { ClaudeProvider } from "./providers/claude";
 import { OpenAIProvider } from "./providers/openai";
 import { MockAIProvider } from "./providers/mock";
+import { GeminiProvider } from "./providers/gemini";
 import { AILayerProvider } from "./types";
 
 export function getAIProvider(): AILayerProvider {
@@ -12,6 +13,11 @@ export function getAIProvider(): AILayerProvider {
         throw new Error("OPENAI_API_KEY is required for OpenAI provider");
       }
       return new OpenAIProvider(process.env.OPENAI_API_KEY);
+    case "gemini":
+      if (!process.env.GEMINI_API_KEY) {
+        throw new Error("GEMINI_API_KEY is required for Gemini provider");
+      }
+      return new GeminiProvider(process.env.GEMINI_API_KEY);
     case "mock":
       return new MockAIProvider();
     case "claude":

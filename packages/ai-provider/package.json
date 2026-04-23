@@ -6,6 +6,7 @@
   "types": "./src/index.ts",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.30.0",
+    "@google/generative-ai": "^0.24.1",
     "openai": "^4.0.0"
   }
 }
