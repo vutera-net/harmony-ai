@@ -21,14 +21,42 @@ interface UserData {
   } | null;
 }
 
-const inputClass =
-  "w-full px-3 py-2 bg-white text-slate-900 placeholder:text-slate-400 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none";
+type FormErrors = Record<string, string>;
+
+// Bảng dịch lỗi validation từ API sang tiếng Việt thân thiện
+const FIELD_ERROR_VI: Record<string, string> = {
+  fullName: "Họ tên tối thiểu 2 ký tự",
+  gender: "Vui lòng chọn giới tính",
+  birthDate: "Ngày sinh không hợp lệ",
+  birthTime: "Giờ sinh không hợp lệ (HH:mm)",
+  birthTimezone: "Múi giờ không hợp lệ",
+  birthLocation: "Nơi sinh không hợp lệ",
+};
+
+// Hiển thị ngày theo định dạng DD/MM/YYYY thân thiện với người Việt
+function formatDateVI(dateStr: string): string {
+  if (!dateStr) return "";
+  const [y, m, d] = dateStr.split("-");
+  if (!y || !m || !d) return dateStr;
+  return `${d}/${m}/${y}`;
+}
+
+const inputBase =
+  "w-full px-3 py-2 bg-white text-slate-900 placeholder:text-slate-400 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none";
+const inputNormal = `${inputBase} border-slate-300`;
+const inputError = `${inputBase} border-red-500 focus:ring-red-400`;
+
+function FieldError({ msg }: { msg?: string }) {
+  if (!msg) return null;
+  return <p className="text-red-600 text-xs mt-1">{msg}</p>;
+}
 
 export default function ProfilePage() {
   const router = useRouter();
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [globalError, setGlobalError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<FormErrors>({});
   const [editing, setEditing] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -60,7 +88,7 @@ export default function ProfilePage() {
         });
       }
     } catch (err) {
-      setError("Không thể tải thông tin hồ sơ");
+      setGlobalError("Không thể tải thông tin hồ sơ");
       console.error(err);
     } finally {
       setLoading(false);
@@ -76,7 +104,31 @@ export default function ProfilePage() {
     router.push("/auth/login");
   };
 
+  // Client-side validation trước khi gọi API
+  const validate = (): FormErrors => {
+    const errors: FormErrors = {};
+    if (formData.fullName && formData.fullName.length < 2) {
+      errors.fullName = "Họ tên tối thiểu 2 ký tự";
+    }
+    if (formData.birthDate && !/^\d{4}-\d{2}-\d{2}$/.test(formData.birthDate)) {
+      errors.birthDate = "Ngày sinh không hợp lệ";
+    }
+    if (formData.birthTime && !/^\d{2}:\d{2}$/.test(formData.birthTime)) {
+      errors.birthTime = "Giờ sinh phải theo định dạng HH:mm";
+    }
+    return errors;
+  };
+
   const handleSaveProfile = async () => {
+    setGlobalError("");
+    setFieldErrors({});
+
+    const clientErrors = validate();
+    if (Object.keys(clientErrors).length > 0) {
+      setFieldErrors(clientErrors);
+      return;
+    }
+
     setSaveLoading(true);
     try {
       const response = await fetch("/api/auth/profile", {
@@ -85,21 +137,43 @@ export default function ProfilePage() {
         body: JSON.stringify(formData),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const data = await response.json();
-        setError(data.error || "Không thể lưu hồ sơ");
+        // Parse lỗi từng field từ API
+        if (data.details && Array.isArray(data.details)) {
+          const errors: FormErrors = {};
+          data.details.forEach((d: { path: string[]; message: string }) => {
+            const field = d.path[0];
+            if (field) {
+              // Ưu tiên message tiếng Việt đã định nghĩa, fallback về message từ server
+              errors[field] = FIELD_ERROR_VI[field] ?? d.message;
+            }
+          });
+          setFieldErrors(errors);
+          if (Object.keys(errors).length === 0) {
+            setGlobalError(data.error || "Không thể lưu hồ sơ");
+          }
+        } else {
+          setGlobalError(data.error || "Không thể lưu hồ sơ");
+        }
         return;
       }
 
-      setError("");
       setEditing(false);
       fetchUserData();
     } catch (err) {
-      setError("Đã xảy ra lỗi khi lưu");
+      setGlobalError("Đã xảy ra lỗi khi lưu");
       console.error(err);
     } finally {
       setSaveLoading(false);
     }
+  };
+
+  const handleCancelEdit = () => {
+    setEditing(false);
+    setFieldErrors({});
+    setGlobalError("");
   };
 
   const planLabel: Record<string, string> = {
@@ -145,9 +219,9 @@ export default function ProfilePage() {
       </div>
 
       <div className="max-w-2xl mx-auto px-4 py-8">
-        {error && (
-          <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-lg">
-            {error}
+        {globalError && (
+          <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-lg text-sm">
+            {globalError}
           </div>
         )}
 
@@ -186,117 +260,112 @@ export default function ProfilePage() {
           </div>
 
           {editing ? (
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+              {/* Họ và tên */}
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
+                <label className="block text-sm font-medium text-slate-700 mb-1">
                   Họ và tên
                 </label>
                 <input
                   type="text"
                   value={formData.fullName}
-                  onChange={(e) =>
-                    setFormData({ ...formData, fullName: e.target.value })
-                  }
-                  className={inputClass}
+                  onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                  className={fieldErrors.fullName ? inputError : inputNormal}
                   placeholder="Nhập họ và tên"
                 />
+                <FieldError msg={fieldErrors.fullName} />
               </div>
 
+              {/* Giới tính + Ngày sinh */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
                     Giới tính
                   </label>
                   <select
                     value={formData.gender}
-                    onChange={(e) =>
-                      setFormData({ ...formData, gender: e.target.value })
-                    }
-                    className={inputClass}
+                    onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+                    className={fieldErrors.gender ? inputError : inputNormal}
                   >
                     <option value="">Chọn</option>
                     <option value="MALE">Nam</option>
                     <option value="FEMALE">Nữ</option>
                   </select>
+                  <FieldError msg={fieldErrors.gender} />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
                     Ngày sinh
                   </label>
                   <input
                     type="date"
                     value={formData.birthDate}
-                    onChange={(e) =>
-                      setFormData({ ...formData, birthDate: e.target.value })
-                    }
-                    className={inputClass}
+                    onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })}
+                    className={fieldErrors.birthDate ? inputError : inputNormal}
                   />
+                  <FieldError msg={fieldErrors.birthDate} />
                 </div>
               </div>
 
+              {/* Giờ sinh + Múi giờ */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Giờ sinh (HH:mm)
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                    Giờ sinh
                   </label>
                   <input
                     type="time"
                     value={formData.birthTime}
-                    onChange={(e) =>
-                      setFormData({ ...formData, birthTime: e.target.value })
-                    }
-                    className={inputClass}
+                    onChange={(e) => setFormData({ ...formData, birthTime: e.target.value })}
+                    className={fieldErrors.birthTime ? inputError : inputNormal}
                   />
+                  <FieldError msg={fieldErrors.birthTime} />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
                     Múi giờ
                   </label>
                   <input
                     type="text"
                     value={formData.birthTimezone}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        birthTimezone: e.target.value,
-                      })
-                    }
-                    className={inputClass}
+                    onChange={(e) => setFormData({ ...formData, birthTimezone: e.target.value })}
+                    className={fieldErrors.birthTimezone ? inputError : inputNormal}
                     placeholder="Asia/Ho_Chi_Minh"
                   />
+                  <FieldError msg={fieldErrors.birthTimezone} />
                 </div>
               </div>
 
+              {/* Nơi sinh */}
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
+                <label className="block text-sm font-medium text-slate-700 mb-1">
                   Nơi sinh
                 </label>
                 <input
                   type="text"
                   value={formData.birthLocation}
-                  onChange={(e) =>
-                    setFormData({ ...formData, birthLocation: e.target.value })
-                  }
-                  className={inputClass}
+                  onChange={(e) => setFormData({ ...formData, birthLocation: e.target.value })}
+                  className={fieldErrors.birthLocation ? inputError : inputNormal}
                   placeholder="Tỉnh/Thành phố"
                 />
+                <FieldError msg={fieldErrors.birthLocation} />
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex gap-2 pt-2">
                 <button
                   type="button"
                   onClick={handleSaveProfile}
                   disabled={saveLoading}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 text-sm font-medium"
                 >
                   {saveLoading ? "Đang lưu..." : "Lưu"}
                 </button>
                 <button
                   type="button"
-                  onClick={() => setEditing(false)}
-                  className="px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 text-slate-700"
+                  onClick={handleCancelEdit}
+                  className="px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 text-slate-700 text-sm"
                 >
                   Hủy
                 </button>
@@ -305,27 +374,29 @@ export default function ProfilePage() {
           ) : (
             <div className="space-y-2 text-slate-600">
               <p>
-                <span className="font-medium">Họ và tên:</span>{" "}
+                <span className="font-medium text-slate-700">Họ và tên:</span>{" "}
                 {formData.fullName || <span className="text-slate-400">Chưa cập nhật</span>}
               </p>
               <p>
-                <span className="font-medium">Giới tính:</span>{" "}
+                <span className="font-medium text-slate-700">Giới tính:</span>{" "}
                 {genderLabel[formData.gender] || <span className="text-slate-400">Chưa cập nhật</span>}
               </p>
               <p>
-                <span className="font-medium">Ngày sinh:</span>{" "}
-                {formData.birthDate || <span className="text-slate-400">Chưa cập nhật</span>}
+                <span className="font-medium text-slate-700">Ngày sinh:</span>{" "}
+                {formData.birthDate
+                  ? formatDateVI(formData.birthDate)
+                  : <span className="text-slate-400">Chưa cập nhật</span>}
               </p>
               <p>
-                <span className="font-medium">Giờ sinh:</span>{" "}
+                <span className="font-medium text-slate-700">Giờ sinh:</span>{" "}
                 {formData.birthTime || <span className="text-slate-400">Chưa cập nhật</span>}
               </p>
               <p>
-                <span className="font-medium">Múi giờ:</span>{" "}
+                <span className="font-medium text-slate-700">Múi giờ:</span>{" "}
                 {formData.birthTimezone}
               </p>
               <p>
-                <span className="font-medium">Nơi sinh:</span>{" "}
+                <span className="font-medium text-slate-700">Nơi sinh:</span>{" "}
                 {formData.birthLocation || <span className="text-slate-400">Chưa cập nhật</span>}
               </p>
             </div>

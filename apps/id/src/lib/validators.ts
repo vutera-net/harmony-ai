@@ -3,16 +3,16 @@ import { z } from "zod";
 export const RegisterSchema = z.object({
   email: z
     .string()
-    .email("Invalid email address")
-    .min(1, "Email is required"),
+    .email("Email không hợp lệ")
+    .min(1, "Email là bắt buộc"),
   password: z
     .string()
-    .min(8, "Password must be at least 8 characters")
+    .min(8, "Mật khẩu tối thiểu 8 ký tự")
     .regex(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      "Password must contain uppercase, lowercase, and numbers"
+      "Mật khẩu phải có chữ hoa, chữ thường và số"
     ),
-  name: z.string().min(2, "Name must be at least 2 characters").optional(),
+  name: z.string().min(2, "Họ tên tối thiểu 2 ký tự").optional(),
 });
 
 export type RegisterInput = z.infer<typeof RegisterSchema>;
@@ -20,23 +20,34 @@ export type RegisterInput = z.infer<typeof RegisterSchema>;
 export const LoginSchema = z.object({
   email: z
     .string()
-    .email("Invalid email address")
-    .min(1, "Email is required"),
-  password: z.string().min(1, "Password is required"),
+    .email("Email không hợp lệ")
+    .min(1, "Email là bắt buộc"),
+  password: z.string().min(1, "Mật khẩu là bắt buộc"),
 });
 
 export type LoginInput = z.infer<typeof LoginSchema>;
 
+// Helper: biến empty string thành undefined để các optional field không bị lỗi validation
+const optionalString = (schema: z.ZodString) =>
+  z.preprocess((val) => (val === "" ? undefined : val), schema.optional());
+
 export const ProfileSchema = z.object({
-  fullName: z.string().min(2, "Full name required").optional(),
-  gender: z.enum(["MALE", "FEMALE"]).optional(),
-  birthDate: z.string().datetime().optional(),
-  birthTime: z
-    .string()
-    .regex(/^\d{2}:\d{2}$/, "Invalid time format (HH:mm)")
-    .optional(),
-  birthTimezone: z.string().optional(),
-  birthLocation: z.string().optional(),
+  fullName: optionalString(z.string().min(2, "Họ tên tối thiểu 2 ký tự")),
+  gender: z.preprocess(
+    (val) => (val === "" ? undefined : val),
+    z.enum(["MALE", "FEMALE"], {
+      errorMap: () => ({ message: "Vui lòng chọn giới tính" }),
+    }).optional()
+  ),
+  // input type="date" gửi YYYY-MM-DD, không phải ISO datetime đầy đủ
+  birthDate: optionalString(
+    z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Ngày sinh không hợp lệ (YYYY-MM-DD)")
+  ),
+  birthTime: optionalString(
+    z.string().regex(/^\d{2}:\d{2}$/, "Giờ sinh không hợp lệ (HH:mm)")
+  ),
+  birthTimezone: optionalString(z.string().min(1)),
+  birthLocation: optionalString(z.string().min(1)),
 });
 
 export type ProfileInput = z.infer<typeof ProfileSchema>;

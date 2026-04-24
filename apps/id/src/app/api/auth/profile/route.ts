@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     if (!validation.success) {
       return NextResponse.json(
         {
-          error: "Validation failed",
+          error: "Dữ liệu không hợp lệ",
           details: validation.error.errors,
         },
         { status: 400 }
@@ -61,9 +61,7 @@ export async function POST(request: NextRequest) {
 
     if (!existingProfile && (!gender || !birthDate)) {
       return NextResponse.json(
-        {
-          error: "Profile not found and required fields (gender, birthDate) are missing for creation",
-        },
+        { error: "Cần có giới tính và ngày sinh để tạo hồ sơ lần đầu" },
         { status: 400 }
       );
     }
@@ -90,7 +88,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Profile update error:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Lỗi máy chủ, vui lòng thử lại sau" },
       { status: 500 }
     );
   }
