@@ -14,9 +14,10 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: {
-  params: { year: string };
+  params: Promise<{ year: string }>;
 }): Promise<Metadata> {
-  const year = parseInt(params.year, 10);
+  const { year: yearStr } = await params;
+  const year = parseInt(yearStr, 10);
   const article = getYearArticle(year);
   const url = `${baseUrl}/tu-vi/${year}`;
 
@@ -71,6 +72,7 @@ export async function generateMetadata({
   };
 }
 
-export default function TuViYearPage({ params }: { params: { year: string } }) {
-  return <PageContent year={params.year} />;
+export default async function TuViYearPage({ params }: { params: Promise<{ year: string }> }) {
+  const { year } = await params;
+  return <PageContent year={year} />;
 }

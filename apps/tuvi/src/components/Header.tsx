@@ -41,7 +41,7 @@ export function Header() {
       navLinks={[
         { label: "Lịch", href: "/tools/calendar" },
         { label: "Ngày Tốt", href: "/tools/lucky-days" },
-        { label: "Về TuVi", href: "/about" },
+        { label: "Tử Vi Năm Sinh", href: "/tu-vi" },
       ]}
       rightContent={authContent}
     />
