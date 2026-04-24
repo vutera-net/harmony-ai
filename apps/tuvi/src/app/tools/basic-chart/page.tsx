@@ -1,17 +1,27 @@
 "use client";
 
-import { useState } from "react";
-import { AuthProvider } from "@harmony/auth/context";
+import { useState, useEffect } from "react";
+import { AuthProvider, useAuthContext } from "@harmony/auth/context";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { getBasicChart } from "@/lib/calendar";
 
 function BasicChartContent() {
+  const { user } = useAuthContext();
   const [date, setDate] = useState<string>(
     new Date().toISOString().split("T")[0]
   );
+  const [autoFilled, setAutoFilled] = useState(false);
   const [chart, setChart] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user?.profile?.birthDate) {
+      const d = new Date(user.profile.birthDate).toISOString().split("T")[0];
+      setDate(d);
+      setAutoFilled(true);
+    }
+  }, [user]);
 
   const handleCalculate = async () => {
     setLoading(true);
@@ -59,20 +69,27 @@ function BasicChartContent() {
           {/* Input Section */}
           <div className="bg-white rounded-lg shadow-md p-8 mb-8">
             <div className="max-w-md">
-              <label className="block text-sm font-medium text-slate-700 mb-3">
-                Ngày Sinh (Dương Lịch)
-              </label>
+              <div className="flex items-center justify-between mb-3">
+                <label className="text-sm font-medium text-slate-700">
+                  Ngày Sinh (Dương Lịch)
+                </label>
+                {autoFilled && (
+                  <span className="text-xs text-harmony-teal font-medium bg-harmony-teal/10 px-2 py-0.5 rounded-full">
+                    ✓ Lấy từ hồ sơ
+                  </span>
+                )}
+              </div>
               <div className="flex gap-3">
                 <input
                   type="date"
                   value={date}
-                  onChange={handleDateChange}
-                  className="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  onChange={(e) => { handleDateChange(e); setAutoFilled(false); }}
+                  className="flex-1 px-4 py-2.5 border border-slate-400 rounded-lg bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-harmony-teal focus:border-harmony-teal transition"
                 />
                 <button
                   onClick={handleCalculate}
                   disabled={loading}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 font-medium transition"
+                  className="px-6 py-2 bg-harmony-teal text-white rounded-lg hover:bg-harmony-teal/90 disabled:opacity-50 font-medium transition"
                 >
                   {loading ? "Đang tính..." : "Xem Lá Số"}
                 </button>

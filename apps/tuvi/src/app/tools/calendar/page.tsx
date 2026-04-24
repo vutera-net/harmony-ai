@@ -10,6 +10,7 @@ function CalendarContent() {
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth() + 1);
 
+  const today = new Date();
   const calendar = getMonthCalendarView(year, month);
   const weekDays = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
 
@@ -79,7 +80,7 @@ function CalendarContent() {
             <div className="flex items-center justify-between mb-8">
               <button
                 onClick={previousMonth}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg transition"
+                className="px-4 py-2 border border-harmony-teal text-harmony-teal hover:bg-harmony-teal hover:text-white rounded-lg transition font-medium"
               >
                 ← Tháng Trước
               </button>
@@ -108,7 +109,7 @@ function CalendarContent() {
 
               <button
                 onClick={nextMonth}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg transition"
+                className="px-4 py-2 border border-harmony-teal text-harmony-teal hover:bg-harmony-teal hover:text-white rounded-lg transition font-medium"
               >
                 Tháng Sau →
               </button>
@@ -130,10 +131,17 @@ function CalendarContent() {
 
               {/* Calendar Days */}
               <div className="grid grid-cols-7">
-                {calendar.map((day, idx) => (
+                {calendar.map((day, idx) => {
+                  const isToday =
+                    day.isCurrentMonth &&
+                    year === today.getFullYear() &&
+                    month === today.getMonth() + 1 &&
+                    day.date === today.getDate();
+
+                  return (
                   <div
                     key={idx}
-                    className={`min-h-24 p-2 border border-slate-200 ${
+                    className={`min-h-24 p-2 border ${isToday ? "border-harmony-teal border-2" : "border-slate-200"} ${
                       !day.isCurrentMonth ? "bg-slate-50" : "bg-white"
                     } ${
                       day.luckLevel === "Tốt"
@@ -144,8 +152,10 @@ function CalendarContent() {
                     }`}
                   >
                     <div
-                      className={`text-sm font-bold mb-1 ${
-                        !day.isCurrentMonth
+                      className={`text-sm font-bold mb-1 w-6 h-6 flex items-center justify-center rounded-full ${
+                        isToday
+                          ? "bg-harmony-teal text-white"
+                          : !day.isCurrentMonth
                           ? "text-slate-400"
                           : "text-slate-900"
                       }`}
@@ -167,7 +177,8 @@ function CalendarContent() {
                       {day.luckLevel}
                     </div>
                   </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 

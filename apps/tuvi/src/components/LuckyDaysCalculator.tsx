@@ -1,39 +1,37 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   findLuckyDaysInMonth,
   getZodiacIndex,
   formatZodiac,
 } from "@/lib/calendar";
-
-const zodiacAnimals = [
-  "Tý",
-  "Sửu",
-  "Dần",
-  "Mão",
-  "Thìn",
-  "Tỵ",
-  "Ngọ",
-  "Mùi",
-  "Thân",
-  "Dậu",
-  "Tuất",
-  "Hợi",
-];
+import { useAuthContext } from "@harmony/auth/context";
 
 export function LuckyDaysCalculator() {
+  const { user, loading: authLoading } = useAuthContext();
+
+  const currentYear = new Date().getFullYear();
+
   const [birthYear, setBirthYear] = useState<number>(2000);
+  const [autoFilled, setAutoFilled] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState<number>(
     new Date().getMonth() + 1
   );
-  const [selectedYear, setSelectedYear] = useState<number>(
-    new Date().getFullYear()
-  );
+  const [selectedYear, setSelectedYear] = useState<number>(currentYear);
   const [luckyDays, setLuckyDays] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const currentYear = new Date().getFullYear();
+  useEffect(() => {
+    if (user?.profile?.birthDate) {
+      const year = new Date(user.profile.birthDate).getFullYear();
+      if (!isNaN(year)) {
+        setBirthYear(year);
+        setAutoFilled(true);
+      }
+    }
+  }, [user]);
+
   const zodiacIndex = getZodiacIndex(birthYear);
   const userZodiac = formatZodiac(zodiacIndex);
 
@@ -49,6 +47,9 @@ export function LuckyDaysCalculator() {
     }
   };
 
+  const inputClass =
+    "w-full px-4 py-2.5 border border-slate-400 rounded-lg bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-harmony-teal focus:border-harmony-teal transition";
+
   return (
     <div className="w-full max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
       <h2 className="text-2xl font-bold text-slate-900 mb-6">
@@ -58,20 +59,31 @@ export function LuckyDaysCalculator() {
       {/* Input Section */}
       <div className="space-y-4 mb-6">
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">
-            Năm Sinh
-          </label>
+          <div className="flex items-center justify-between mb-2">
+            <label className="text-sm font-medium text-slate-700">
+              Năm Sinh
+            </label>
+            {autoFilled && (
+              <span className="text-xs text-harmony-teal font-medium bg-harmony-teal/10 px-2 py-0.5 rounded-full">
+                ✓ Lấy từ hồ sơ
+              </span>
+            )}
+          </div>
           <input
             type="number"
             min={1900}
             max={currentYear}
             value={birthYear}
-            onChange={(e) => setBirthYear(Number(e.target.value))}
-            className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            onChange={(e) => {
+              setBirthYear(Number(e.target.value));
+              setAutoFilled(false);
+            }}
+            className={inputClass}
             placeholder="Nhập năm sinh"
           />
-          <p className="text-sm text-slate-500 mt-1">
-            Con giáp của bạn: <span className="font-semibold">{userZodiac}</span>
+          <p className="text-sm text-slate-500 mt-1.5">
+            Con giáp của bạn:{" "}
+            <span className="font-semibold text-slate-700">{userZodiac}</span>
           </p>
         </div>
 
@@ -83,7 +95,7 @@ export function LuckyDaysCalculator() {
             <select
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(Number(e.target.value))}
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
             >
               {Array.from({ length: 12 }, (_, i) => (
                 <option key={i + 1} value={i + 1}>
@@ -100,7 +112,7 @@ export function LuckyDaysCalculator() {
             <select
               value={selectedYear}
               onChange={(e) => setSelectedYear(Number(e.target.value))}
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
             >
               {Array.from({ length: 5 }, (_, i) => currentYear - 2 + i).map(
                 (year) => (
@@ -115,8 +127,8 @@ export function LuckyDaysCalculator() {
 
         <button
           onClick={handleCalculate}
-          disabled={loading}
-          className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 font-medium transition"
+          disabled={loading || authLoading}
+          className="w-full px-6 py-3 bg-harmony-teal text-white rounded-lg hover:bg-harmony-teal/90 disabled:opacity-50 font-medium transition"
         >
           {loading ? "Đang tính toán..." : "Tìm Ngày Tốt"}
         </button>
@@ -147,19 +159,19 @@ export function LuckyDaysCalculator() {
               </div>
             ))}
           </div>
-
-          {luckyDays.length === 0 && (
-            <p className="text-center text-slate-500 py-6">
-              Không tìm thấy ngày tốt trong tháng này. Hãy thử tháng khác.
-            </p>
-          )}
         </div>
       )}
 
+      {luckyDays.length === 0 && !loading && (
+        <p className="text-center text-slate-400 text-sm py-4">
+          Nhấn "Tìm Ngày Tốt" để xem kết quả.
+        </p>
+      )}
+
       {/* Info Section */}
-      <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-        <h4 className="font-semibold text-blue-900 mb-2">💡 Giải Thích</h4>
-        <p className="text-sm text-blue-800">
+      <div className="mt-6 p-4 bg-harmony-teal/5 border border-harmony-teal/20 rounded-lg">
+        <h4 className="font-semibold text-slate-800 mb-2">💡 Giải Thích</h4>
+        <p className="text-sm text-slate-600">
           Ngày tốt được tính dựa trên lịch âm dương và con giáp của bạn. Những ngày này
           thích hợp để khởi động các dự án, ký hợp đồng, hay đưa ra quyết định quan trọng.
         </p>

@@ -1,17 +1,29 @@
 "use client";
 
-import { useState } from "react";
-import { AuthProvider } from "@harmony/auth/context";
+import { useState, useEffect } from "react";
+import { AuthProvider, useAuthContext } from "@harmony/auth/context";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { getZodiacIndex, formatZodiac, getYearlyHoroscope } from "@/lib/calendar";
 
 function HoroscopeContent() {
+  const { user } = useAuthContext();
+  const currentYear = new Date().getFullYear();
   const [birthYear, setBirthYear] = useState<number>(2000);
+  const [autoFilled, setAutoFilled] = useState(false);
+
+  useEffect(() => {
+    if (user?.profile?.birthDate) {
+      const year = new Date(user.profile.birthDate).getFullYear();
+      if (!isNaN(year)) {
+        setBirthYear(year);
+        setAutoFilled(true);
+      }
+    }
+  }, [user]);
+
   const zodiacIndex = getZodiacIndex(birthYear);
   const horoscope = getYearlyHoroscope(zodiacIndex);
-
-  const currentYear = new Date().getFullYear();
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
@@ -41,22 +53,29 @@ function HoroscopeContent() {
 
           {/* Input Section */}
           <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-            <label className="block text-sm font-medium text-slate-700 mb-4">
-              Năm Sinh Của Bạn
-            </label>
-            <div className="flex gap-4 items-end">
+            <div className="flex items-center justify-between mb-4">
+              <label className="text-sm font-medium text-slate-700">
+                Năm Sinh Của Bạn
+              </label>
+              {autoFilled && (
+                <span className="text-xs text-harmony-teal font-medium bg-harmony-teal/10 px-2 py-0.5 rounded-full">
+                  ✓ Lấy từ hồ sơ
+                </span>
+              )}
+            </div>
+            <div className="flex gap-4 items-center">
               <div className="flex-1">
                 <input
                   type="number"
                   min={1900}
                   max={currentYear}
                   value={birthYear}
-                  onChange={(e) => setBirthYear(Number(e.target.value))}
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  onChange={(e) => { setBirthYear(Number(e.target.value)); setAutoFilled(false); }}
+                  className="w-full px-4 py-2.5 border border-slate-400 rounded-lg bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-harmony-teal focus:border-harmony-teal transition"
                 />
               </div>
               <div className="text-sm text-slate-600 font-semibold whitespace-nowrap">
-                Con giáp: <span className="text-blue-600">{formatZodiac(zodiacIndex)}</span>
+                Con giáp: <span className="text-harmony-teal">{formatZodiac(zodiacIndex)}</span>
               </div>
             </div>
           </div>
