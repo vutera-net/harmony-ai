@@ -51,9 +51,18 @@ export class GeminiProvider implements AILayerProvider {
           const result = await chat.sendMessageStream(lastMessage);
 
           for await (const chunk of result.stream) {
-            const text = chunk.text();
-            if (text) {
-              controller.enqueue(encoder.encode(text));
+            // Skip thinking/reasoning parts (thought: true) - only stream final response
+            const parts = chunk.candidates?.[0]?.content?.parts;
+            if (parts) {
+              for (const part of parts) {
+                if ((part as { thought?: boolean; text?: string }).thought) continue;
+                const text = (part as { text?: string }).text;
+                if (text) controller.enqueue(encoder.encode(text));
+              }
+            } else {
+              // Fallback for chunks without parts structure
+              const text = chunk.text();
+              if (text) controller.enqueue(encoder.encode(text));
             }
           }
           controller.close();
