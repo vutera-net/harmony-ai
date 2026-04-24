@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "@harmony/tailwind-config/theme.css";
+@source "../../../../packages/ui/src";
 
 :root {
   --background: #ffffff;

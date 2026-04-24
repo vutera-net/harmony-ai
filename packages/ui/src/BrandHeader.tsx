@@ -8,9 +8,10 @@ interface BrandHeaderProps {
   appUrl: string;
   navLinks?: { label: string; href: string }[];
   showAuth?: boolean;
+  rightContent?: React.ReactNode;
 }
 
-export function BrandHeader({ appName, appUrl, navLinks = [], showAuth = false }: BrandHeaderProps) {
+export function BrandHeader({ appName, appUrl, navLinks = [], showAuth = false, rightContent }: BrandHeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
@@ -39,7 +40,8 @@ export function BrandHeader({ appName, appUrl, navLinks = [], showAuth = false }
           </nav>
 
           {/* Right side */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            {rightContent}
             {showAuth && (
               <div className="text-xs text-slate-400 italic bg-slate-100 px-2 py-1 rounded-md">Xác thực đã bật</div>
             )}
