@@ -19,17 +19,7 @@ export default function ChatPage() {
   const [isPremium, setIsPremium] = useState(false);
   const [dailyReminder, setDailyReminder] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages]);
-
-  useEffect(() => {
-    checkPremiumStatus();
-    fetchDailyReminder();
-  }, []);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const checkPremiumStatus = async () => {
     try {
@@ -55,6 +45,19 @@ export default function ChatPage() {
     }
   };
 
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages]);
+
+  useEffect(() => {
+    void (async () => {
+      await checkPremiumStatus();
+      await fetchDailyReminder();
+    })();
+  }, []);
+
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
@@ -62,6 +65,9 @@ export default function ChatPage() {
     const userMessage: Message = { role: "user", content: input };
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+    }
     setIsLoading(true);
 
     try {
@@ -105,7 +111,7 @@ export default function ChatPage() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-200 flex flex-col relative overflow-hidden">
+    <main className="flex-1 flex flex-col bg-slate-950 text-slate-200 relative overflow-hidden" style={{ height: 'calc(100vh - 64px)' }}>
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-harmony-purple/5 blur-[150px] rounded-full" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-harmony-teal/5 blur-[150px] rounded-full" />
@@ -136,9 +142,9 @@ export default function ChatPage() {
         </button>
       </header>
 
-      <div 
+      <div
         ref={scrollRef}
-        className="relative z-10 flex-1 overflow-y-auto p-6 space-y-6 scroll-smooth"
+        className="relative z-10 flex-1 overflow-y-auto min-h-0 p-6 space-y-6 scroll-smooth"
       >
         {dailyReminder && (
           <motion.div 
@@ -183,25 +189,39 @@ export default function ChatPage() {
       </div>
 
       <footer className="relative z-10 p-6 border-t border-slate-800 bg-slate-950/50 backdrop-blur-md">
-        <form onSubmit={sendMessage} className="max-w-4xl mx-auto relative">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Hỏi Master AI về vận mệnh của bạn..."
-            className="w-full px-6 py-4 bg-slate-900 border border-slate-700 rounded-full text-slate-200 focus:ring-2 focus:ring-harmony-gold/50 outline-none transition-all pr-16"
-          />
-          <button
-            type="submit"
-            disabled={!input.trim() || isLoading}
-            className="absolute right-2 top-2 bottom-2 px-6 bg-harmony-gold text-slate-950 font-medium rounded-full hover:bg-harmony-gold/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Gửi
-          </button>
+        <form onSubmit={sendMessage} className="max-w-4xl mx-auto">
+          <div className="relative flex items-end bg-slate-900 border border-slate-700 rounded-2xl focus-within:ring-2 focus-within:ring-harmony-gold/50 transition-all">
+            <textarea
+              ref={textareaRef}
+              value={input}
+              onChange={(e) => {
+                setInput(e.target.value);
+                e.target.style.height = 'auto';
+                e.target.style.height = Math.min(e.target.scrollHeight, 160) + 'px';
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  sendMessage(e as unknown as React.FormEvent);
+                }
+              }}
+              rows={1}
+              placeholder="Hỏi về vận mệnh của bạn..."
+              className="flex-1 px-5 py-4 bg-transparent text-slate-200 outline-none resize-none placeholder:text-slate-500 leading-relaxed"
+              style={{ minHeight: '56px', maxHeight: '160px', overflowY: 'auto' }}
+            />
+            <button
+              type="submit"
+              disabled={!input.trim() || isLoading}
+              className="m-2 px-5 py-2.5 bg-harmony-gold text-slate-950 font-medium rounded-xl hover:bg-harmony-gold/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shrink-0 self-end"
+            >
+              Gửi
+            </button>
+          </div>
+          <p className="text-center text-[10px] text-slate-600 mt-2 italic">
+            Enter để gửi · Shift+Enter để xuống dòng · Master AI chỉ mang tính tham khảo
+          </p>
         </form>
-        <p className="text-center text-[10px] text-slate-600 mt-4 italic">
-          Master AI cung cấp những lời khuyên mang tính tham khảo, hãy dùng trí tuệ của chính bạn để quyết định.
-        </p>
       </footer>
     </main>
   );
