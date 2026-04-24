@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     if (!validation.success) {
       return NextResponse.json(
         {
-          error: "Validation failed",
+          error: "Dữ liệu không hợp lệ",
           details: validation.error.errors,
         },
         { status: 400 }
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
 
     if (existingUser) {
       return NextResponse.json(
-        { error: "Email already registered" },
+        { error: "Email này đã được đăng ký" },
         { status: 409 }
       );
     }
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Register error:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Lỗi máy chủ, vui lòng thử lại sau" },
       { status: 500 }
     );
   }

@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     if (!validation.success) {
       return NextResponse.json(
         {
-          error: "Validation failed",
+          error: "Dữ liệu không hợp lệ",
           details: validation.error.errors,
         },
         { status: 400 }
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
 
     if (!user || !user.passwordHash) {
       return NextResponse.json(
-        { error: "Invalid email or password" },
+        { error: "Email hoặc mật khẩu không đúng" },
         { status: 401 }
       );
     }
@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
 
     if (!passwordValid) {
       return NextResponse.json(
-        { error: "Invalid email or password" },
+        { error: "Email hoặc mật khẩu không đúng" },
         { status: 401 }
       );
     }
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Login error:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Lỗi máy chủ, vui lòng thử lại sau" },
       { status: 500 }
     );
   }

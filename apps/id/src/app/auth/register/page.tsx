@@ -20,7 +20,6 @@ export default function RegisterPage() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    // Clear error for this field when user starts typing
     if (validationErrors[name]) {
       setValidationErrors((prev) => {
         const next = { ...prev };
@@ -55,29 +54,30 @@ export default function RegisterPage() {
           );
           setValidationErrors(errors);
         } else {
-          setError(data.error || "Registration failed");
+          setError(data.error || "Đăng ký thất bại");
         }
         return;
       }
 
-      // Redirect to profile
       router.push("/auth/profile");
     } catch (err) {
-      setError("An error occurred. Please try again.");
+      setError("Đã xảy ra lỗi. Vui lòng thử lại.");
       console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
+  const inputClass = "w-full px-4 py-2 bg-white text-slate-900 placeholder:text-slate-400 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none";
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
       <div className="w-full max-w-md">
         <div className="bg-white rounded-xl shadow-lg p-8">
           <h1 className="text-3xl font-bold text-slate-900 mb-2">
-            Join Harmony
+            Tham gia Harmony
           </h1>
-          <p className="text-slate-600 mb-6">Create your account</p>
+          <p className="text-slate-600 mb-6">Tạo tài khoản mới</p>
 
           {error && (
             <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg">
@@ -88,15 +88,15 @@ export default function RegisterPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">
-                Full Name (Optional)
+                Họ và tên <span className="text-slate-400 font-normal">(Không bắt buộc)</span>
               </label>
               <input
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Your name"
+                className={`${inputClass} border-slate-300`}
+                placeholder="Nhập họ và tên"
               />
             </div>
 
@@ -110,10 +110,8 @@ export default function RegisterPage() {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                  validationErrors.email ? "border-red-500" : "border-slate-300"
-                }`}
-                placeholder="you@example.com"
+                className={`${inputClass} ${validationErrors.email ? "border-red-500" : "border-slate-300"}`}
+                placeholder="email@example.com"
               />
               {validationErrors.email && (
                 <p className="text-red-600 text-sm mt-1">
@@ -124,7 +122,7 @@ export default function RegisterPage() {
 
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">
-                Password
+                Mật khẩu
               </label>
               <input
                 type="password"
@@ -132,11 +130,7 @@ export default function RegisterPage() {
                 value={formData.password}
                 onChange={handleChange}
                 required
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                  validationErrors.password
-                    ? "border-red-500"
-                    : "border-slate-300"
-                }`}
+                className={`${inputClass} ${validationErrors.password ? "border-red-500" : "border-slate-300"}`}
                 placeholder="••••••••"
               />
               {validationErrors.password && (
@@ -145,8 +139,7 @@ export default function RegisterPage() {
                 </p>
               )}
               <p className="text-xs text-slate-500 mt-2">
-                Must be at least 8 characters with uppercase, lowercase, and
-                numbers
+                Tối thiểu 8 ký tự, bao gồm chữ hoa, chữ thường và số
               </p>
             </div>
 
@@ -155,17 +148,17 @@ export default function RegisterPage() {
               disabled={loading}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition disabled:opacity-50"
             >
-              {loading ? "Creating account..." : "Create Account"}
+              {loading ? "Đang tạo tài khoản..." : "Tạo tài khoản"}
             </button>
           </form>
 
           <p className="text-center text-slate-600 mt-6">
-            Already have an account?{" "}
+            Đã có tài khoản?{" "}
             <Link
               href="/auth/login"
               className="text-blue-600 hover:underline font-medium"
             >
-              Sign in
+              Đăng nhập
             </Link>
           </p>
         </div>
