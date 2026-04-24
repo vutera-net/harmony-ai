@@ -30,6 +30,15 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <BrandHeader 
+          appName="Harmony AI" 
+          appUrl="/" 
+          navLinks={[
+            { label: "TuVi App", href: "https://tuvi.vutera.net" },
+            { label: "MenhAn Sanctuary", href: "https://menhan.vutera.net" },
+            { label: "Câu chuyện", href: "#intro" },
+          ]}
+        />
         <main className="flex-grow">
           {children}
         </main>
