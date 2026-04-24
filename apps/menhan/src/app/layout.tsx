@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "@harmony/auth";
-import { BrandHeader, BrandFooter } from "@harmony/ui";
+import { BrandFooter } from "@harmony/ui";
+import { Header } from "@/components/Header";
 
 export const metadata: Metadata = {
   title: "MenhAn Sanctuary | AI Mentor",
@@ -17,16 +18,7 @@ export default function RootLayout({
     <html lang="vi" suppressHydrationWarning>
       <body className="min-h-screen antialiased selection:bg-harmony-gold/30 flex flex-col">
         <AuthProvider>
-          <BrandHeader 
-            appName="MenhAn Sanctuary" 
-            appUrl="/" 
-            navLinks={[
-              { label: "Destiny Journal", href: "/journal" },
-              { label: "AI Mentor", href: "/mentor" },
-              { label: "Reports", href: "/reports" },
-            ]}
-            showAuth={true}
-          />
+          <Header />
           <main className="flex-grow">
             {children}
           </main>
