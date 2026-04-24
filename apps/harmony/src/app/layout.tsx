@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Harmony AI | Digital Sanctuary",
-  description: "Combining ancient Vietnamese metaphysics with modern AI to guide your destiny.",
+  title: "Harmony AI | Thánh Đường Số",
+  description: "Kết hợp siêu hình học cổ truyền Việt Nam với AI hiện đại để dẫn lối vận mệnh của bạn.",
 };
 
 export default function RootLayout({
@@ -25,20 +25,11 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="vi"
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <BrandHeader 
-          appName="Harmony AI" 
-          appUrl="/" 
-          navLinks={[
-            { label: "TuVi App", href: "https://tuvi.vutera.net" },
-            { label: "MenhAn Sanctuary", href: "https://menhan.vutera.net" },
-            { label: "Our Story", href: "#intro" },
-          ]}
-        />
         <main className="flex-grow">
           {children}
         </main>

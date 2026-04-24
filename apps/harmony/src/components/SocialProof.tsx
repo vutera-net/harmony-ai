@@ -2,19 +2,19 @@ import React from 'react';
 
 const testimonials = [
   {
-    quote: "The Master AI provided insights that resonated with me on a level I've never experienced with any other astrology tool.",
+    quote: "Master AI đã cung cấp những góc nhìn sâu sắc chạm đến tôi ở một mức độ mà tôi chưa từng trải nghiệm với bất kỳ công cụ chiêm tinh nào khác.",
     author: "Minh T.",
-    role: "Entrepreneur",
+    role: "Doanh nhân",
   },
   {
-    quote: "The Destiny Journal changed how I view my life's patterns. I feel more in control and aligned with my purpose.",
+    quote: "Nhật ký Vận mệnh đã thay đổi cách tôi nhìn nhận những khuôn mẫu trong cuộc sống. Tôi cảm thấy làm chủ hơn và đồng điệu hơn với mục đích sống của mình.",
     author: "Lan A.",
-    role: "Creative Director",
+    role: "Giám đốc Sáng tạo",
   },
   {
-    quote: "Beautifully designed and deeply insightful. Harmony AI is more than an app; it's a companion for growth.",
+    quote: "Thiết kế tuyệt đẹp và thấu hiểu sâu sắc. Harmony AI không chỉ là một ứng dụng; đó là một người bạn đồng hành trên con đường trưởng thành.",
     author: "Hoàng N.",
-    role: "Researcher",
+    role: "Nhà nghiên cứu",
   },
 ];
 
@@ -23,7 +23,7 @@ export default function SocialProof() {
     <section className="py-24 bg-white text-gray-800">
       <div className="container mx-auto px-6">
         <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-16">
-          Trusted by <span className="text-harmony-teal">Seekers Worldwide</span>
+          Được tin dùng bởi những <span className="text-harmony-teal">Người tìm kiếm trên toàn thế giới</span>
         </h2>
         <div className="grid md:grid-cols-3 gap-8">
           {testimonials.map((t, i) => (

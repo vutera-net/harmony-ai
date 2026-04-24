@@ -7,12 +7,12 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="text-center md:text-left">
             <h3 className="text-2xl font-bold text-white mb-2">Harmony AI</h3>
-            <p className="text-sm">© 2026 Vutera. All rights reserved.</p>
+            <p className="text-sm">© 2026 Vutera. Bảo lưu mọi quyền.</p>
           </div>
           <div className="flex gap-8">
-            <a href="#" className="hover:text-harmony-teal transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-harmony-teal transition-colors">Terms of Service</a>
-            <a href="#" className="hover:text-harmony-teal transition-colors">Contact</a>
+            <a href="#" className="hover:text-harmony-teal transition-colors">Chính sách Bảo mật</a>
+            <a href="#" className="hover:text-harmony-teal transition-colors">Điều khoản Dịch vụ</a>
+            <a href="#" className="hover:text-harmony-teal transition-colors">Liên hệ</a>
           </div>
         </div>
       </div>

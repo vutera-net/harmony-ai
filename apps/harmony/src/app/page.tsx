@@ -2,7 +2,6 @@ import Hero from '@/components/Hero';
 import Intro from '@/components/Intro';
 import Ecosystem from '@/components/Ecosystem';
 import SocialProof from '@/components/SocialProof';
-import Footer from '@/components/Footer';
 
 export default function LandingPage() {
   return (
@@ -11,7 +10,6 @@ export default function LandingPage() {
       <Intro />
       <Ecosystem />
       <SocialProof />
-      <Footer />
     </main>
   );
 }

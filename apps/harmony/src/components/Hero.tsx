@@ -14,23 +14,23 @@ export default function Hero() {
         <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-gray-900 mb-6">
           Harmony <span className="text-harmony-teal">AI</span>
         </h1>
-        <p className="text-xl md:text-2xl text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">
-          Your digital sanctuary for spiritual balance. Combining ancient Vietnamese metaphysics with modern AI to guide your destiny.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link 
-            href="https://tuvi.vutera.net" 
-            className="px-8 py-4 bg-harmony-teal text-white rounded-full font-semibold text-lg hover:bg-harmony-teal/90 transition-all shadow-lg hover:shadow-harmony-teal/30"
-          >
-            Discover Your Chart
-          </Link>
-          <Link 
-            href="#ecosystem" 
-            className="px-8 py-4 bg-white text-harmony-teal border-2 border-harmony-teal rounded-full font-semibold text-lg hover:bg-harmony-teal/5 transition-all"
-          >
-            Explore Sanctuary
-          </Link>
-        </div>
+          <p className="text-xl md:text-2xl text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">
+            Thánh đường số cho sự cân bằng tâm linh. Kết hợp siêu hình học cổ truyền Việt Nam với AI hiện đại để dẫn lối vận mệnh của bạn.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link 
+              href="https://tuvi.vutera.net" 
+              className="px-8 py-4 bg-harmony-teal text-white rounded-full font-semibold text-lg hover:bg-harmony-teal/90 transition-all shadow-lg hover:shadow-harmony-teal/30"
+            >
+              Khám phá Bản đồ Vận mệnh
+            </Link>
+            <Link 
+              href="#ecosystem" 
+              className="px-8 py-4 bg-white text-harmony-teal border-2 border-harmony-teal rounded-full font-semibold text-lg hover:bg-harmony-teal/5 transition-all"
+            >
+              Khám phá Thánh Đường
+            </Link>
+          </div>
       </div>
     </section>
   );
