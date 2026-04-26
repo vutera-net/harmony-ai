@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@harmony/database";
+import { prisma, ensureUserExists } from "@harmony/database";
 import { getTokenFromRequest } from "@harmony/auth/middleware";
 import { getAIProvider } from "@harmony/ai-provider";
 
-const db = new PrismaClient();
+const db = prisma;
 
 async function getUserId(req: NextRequest) {
   const token = getTokenFromRequest(req);
@@ -30,6 +30,9 @@ export async function POST(
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+    
+    // Ensure user exists in Harmony DB
+    await ensureUserExists(userId);
     
     const journalEntry = await db.journalEntry.findUnique({
       where: { id },

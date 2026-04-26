@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@harmony/database";
+import { prisma, ensureUserExists } from "@harmony/database";
 import { getTokenFromRequest } from "@harmony/auth/middleware";
 import { z } from "zod";
 
@@ -8,7 +8,7 @@ const JournalEntrySchema = z.object({
   eventDate: z.string(), // ISO date
 });
 
-const db = new PrismaClient();
+const db = prisma;
 
 async function getUserId(req: NextRequest) {
   const token = getTokenFromRequest(req);
@@ -32,6 +32,9 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Ensure user exists in Harmony DB before querying
+    await ensureUserExists(userId);
+
     const entries = await db.journalEntry.findMany({
       where: { userId },
       include: { prediction: true },
@@ -40,6 +43,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(entries);
   } catch (error) {
+
     console.error("[JOURNAL_GET_ERROR]", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   } finally {
@@ -53,6 +57,9 @@ export async function POST(req: NextRequest) {
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    // Ensure user exists in Harmony DB before creating entry
+    await ensureUserExists(userId);
 
     const body = await req.json();
     const validatedData = JournalEntrySchema.parse(body);

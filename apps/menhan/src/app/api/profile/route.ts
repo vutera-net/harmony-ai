@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@harmony/database";
+import { prisma, ensureUserExists } from "@harmony/database";
 import { getTokenFromRequest } from "@harmony/auth/middleware";
 import { z } from "zod";
 
@@ -11,7 +11,7 @@ const ProfileUpdateSchema = z.object({
   birthTimezone: z.string().min(1, "Timezone is required"),
 });
 
-const db = new PrismaClient();
+const db = prisma;
 
 export async function PATCH(req: NextRequest) {
   try {
@@ -36,6 +36,9 @@ export async function PATCH(req: NextRequest) {
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    // Ensure user exists in Harmony DB
+    await ensureUserExists(userId);
 
     const body = await req.json();
     const validatedData = ProfileUpdateSchema.parse(body);

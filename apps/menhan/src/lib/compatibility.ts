@@ -12,7 +12,7 @@ export interface CompatibilityResult {
 
 export function checkCompatibility(p1: Profile, p2: Profile): CompatibilityResult {
   // Simplified Compatibility logic based on Wu Xing (5 Elements) and Zodiac
-  const elements = {
+  const elements: Record<string, string> = {
     WOOD: "Mộc",
     FIRE: "Hỏa",
     EARTH: "Thổ",

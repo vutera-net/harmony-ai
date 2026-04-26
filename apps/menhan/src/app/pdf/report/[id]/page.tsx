@@ -1,7 +1,7 @@
-import { PrismaClient } from "@harmony/database";
+import { prisma } from "@harmony/database";
 import { notFound } from "next/navigation";
 
-const db = new PrismaClient();
+const db = prisma;
 
 export default async function PDFReportPage({ params }: { params: { id: string } }) {
   const chart = await db.chart.findUnique({

@@ -1,6 +1,6 @@
-import { PrismaClient } from "@harmony/database";
+import { prisma } from "@harmony/database";
 
-const db = new PrismaClient();
+const db = prisma;
 
 export type PaymentProvider = "STRIPE" | "VNPAY" | "MOMO" | "MOCK";
 

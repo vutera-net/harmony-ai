@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateAIHook, buildMenhAnUrl, isValidEmail } from "@/lib/leadgen";
-import { PrismaClient } from "@harmony/database";
+import { prisma } from "@harmony/database";
 
-const prisma = new PrismaClient();
+const db = prisma;
 
 export async function POST(request: NextRequest) {
   try {
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
 
     // Save lead to database (graceful degradation if fails)
     try {
-      await prisma.lead.create({
+      await db.lead.create({
         data: {
           email,
           birthYear: parseInt(birthYear, 10),

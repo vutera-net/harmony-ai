@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@harmony/database";
+import { prisma, ensureUserExists } from "@harmony/database";
 import { getTokenFromRequest } from "@harmony/auth/middleware";
 import { z } from "zod";
 
@@ -7,7 +7,7 @@ const PlanSchema = z.object({
   plan: z.enum(["AN_NHIEN", "BINH_AN", "VinhCuu"]), // Added VinhCuu as lifetime
 });
 
-const db = new PrismaClient();
+const db = prisma;
 
 async function getUserId(req: NextRequest) {
   const token = getTokenFromRequest(req);
@@ -31,6 +31,9 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Ensure user exists in Harmony DB
+    await ensureUserExists(userId);
+
     const subscription = await db.subscription.findFirst({
       where: { userId },
     });
@@ -50,6 +53,9 @@ export async function POST(req: NextRequest) {
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    // Ensure user exists in Harmony DB
+    await ensureUserExists(userId);
 
     const body = await req.json();
     const { plan } = PlanSchema.parse(body);
