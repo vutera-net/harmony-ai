@@ -53,6 +53,12 @@ export async function GET(req: NextRequest) {
   }
 }
 
+// ... (keep imports and schema)
+
+// ... (keep imports and schema)
+
+// ... (keep imports and schema)
+
 export async function PATCH(req: NextRequest) {
   try {
     const token = getTokenFromRequest(req);
@@ -94,8 +100,8 @@ export async function PATCH(req: NextRequest) {
       },
       create: {
         userId,
-        gender: validatedData.gender,
-        birthDate: validatedData.birthDate ? new Date(validatedData.birthDate) : undefined,
+        gender: (validatedData.gender || null) as any,
+        birthDate: (validatedData.birthDate ? new Date(validatedData.birthDate) : null) as any,
         birthTime: validatedData.birthTime || null,
         birthLocation: validatedData.birthLocation,
         birthTimezone: validatedData.birthTimezone,

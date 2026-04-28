@@ -1,5 +1,5 @@
 // Client-side utilities
-export { useAuth, useProtectedRoute, logout, login, register, getSSOLoginURL } from "./lib/client";
+export { useAuth, useProtectedRoute, logout, login, register, getSSOLoginURL, getSSOLogoutURL } from "./lib/client";
 export type { AuthUser } from "./lib/client";
 
 // Context & Provider
