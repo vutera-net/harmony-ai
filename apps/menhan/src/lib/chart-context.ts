@@ -84,6 +84,9 @@ export interface ChartContext {
  * Deterministic Layer: converts DB data to structured chart info
  */
 export function buildChartContext(profile: Profile): ChartContext {
+  if (!profile.birthDate) {
+    throw new Error("Birth date is required to build chart context");
+  }
   const birthDate = new Date(profile.birthDate);
   const year = birthDate.getFullYear();
   const month = birthDate.getMonth() + 1;

@@ -50,7 +50,7 @@ export async function GET(req: NextRequest) {
       Keep it under 3 sentences. Format as a poetic but practical reminder.
     `;
 
-    const userPrompt = `User Profile: ${profile.gender}, Born ${profile.birthDate.toISOString()}. Energy Type: ${profile.energyType}. Today is ${new Date().toISOString()}.`;
+    const userPrompt = `User Profile: ${profile.gender ?? 'Unknown'}, Born ${profile.birthDate?.toISOString() ?? 'Unknown'}. Energy Type: ${profile.energyType ?? 'Unknown'}. Today is ${new Date().toISOString()}.`;
 
     const responseText = await provider.generateResponse(systemPrompt, [
       { role: "user", content: userPrompt }
