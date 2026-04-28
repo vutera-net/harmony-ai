@@ -4,11 +4,11 @@ import { getTokenFromRequest } from "@harmony/auth/middleware";
 import { z } from "zod";
 
 const ProfileUpdateSchema = z.object({
-  gender: z.enum(["MALE", "FEMALE"]),
-  birthDate: z.string(), // ISO date
-  birthTime: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, "Invalid time format (HH:mm)"),
-  birthLocation: z.string().min(2, "Location is required"),
-  birthTimezone: z.string().min(1, "Timezone is required"),
+  gender: z.enum(["MALE", "FEMALE"]).optional(),
+  birthDate: z.string().optional(), // ISO date
+  birthTime: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/).optional().or(z.literal("")),
+  birthLocation: z.string().optional(),
+  birthTimezone: z.string().optional(),
 });
 
 const db = prisma;
@@ -53,6 +53,12 @@ export async function GET(req: NextRequest) {
   }
 }
 
+// ... (keep imports and schema)
+
+// ... (keep imports and schema)
+
+// ... (keep imports and schema)
+
 export async function PATCH(req: NextRequest) {
   try {
     const token = getTokenFromRequest(req);
@@ -87,16 +93,16 @@ export async function PATCH(req: NextRequest) {
       where: { userId },
       update: {
         gender: validatedData.gender,
-        birthDate: new Date(validatedData.birthDate),
-        birthTime: validatedData.birthTime,
+        birthDate: validatedData.birthDate ? new Date(validatedData.birthDate) : undefined,
+        birthTime: validatedData.birthTime || null,
         birthLocation: validatedData.birthLocation,
         birthTimezone: validatedData.birthTimezone,
       },
       create: {
         userId,
-        gender: validatedData.gender,
-        birthDate: new Date(validatedData.birthDate),
-        birthTime: validatedData.birthTime,
+        gender: (validatedData.gender || null) as any,
+        birthDate: (validatedData.birthDate ? new Date(validatedData.birthDate) : null) as any,
+        birthTime: validatedData.birthTime || null,
         birthLocation: validatedData.birthLocation,
         birthTimezone: validatedData.birthTimezone,
       },

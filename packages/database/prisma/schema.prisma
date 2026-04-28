@@ -49,6 +49,18 @@ model User {
   payments       Payment[]
 }
 
+// ... (keep existing enums)
+
+model User {
+  id            String         @id // No default(cuid()) because ID comes from vutera-id
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  profile       Profile?
+  subscriptions Subscription[]
+  journalEntries JournalEntry[]
+  payments       Payment[]
+}
+
 model Profile {
   id            String    @id @default(cuid())
   userId        String    @unique
@@ -56,8 +68,8 @@ model Profile {
 
   // Only keep astrology-specific data here
   fullName      String?
-  gender        Gender
-  birthDate     DateTime
+  gender        Gender?
+  birthDate     DateTime?
   birthTime     String?   // HH:mm format (e.g., "14:30")
   birthTimezone String?   // IANA timezone (e.g., "Asia/Ho_Chi_Minh")
   birthLocation String?   // City/Province
@@ -71,6 +83,7 @@ model Profile {
 
   @@index([userId])
 }
+// ... (keep rest of the file)
 
 model Lead {
   id        String   @id @default(cuid())

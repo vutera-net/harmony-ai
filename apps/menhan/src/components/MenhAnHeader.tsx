@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { BrandHeader } from '@harmony/ui';
-import { useAuthContext, AuthProvider } from '@harmony/auth/context';
+import { useAuthContext } from '@harmony/auth/context';
 import Link from 'next/link';
 import { getSSOLoginURL, getSSOLogoutURL } from '@harmony/auth';
 
@@ -12,8 +12,8 @@ function HeaderContent() {
   if (!user) {
     return (
       <Link 
-        href={getSSOLoginURL('/')}
-        className="bg-harmony-teal text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-harmony-teal/90 transition-all active:scale-95"
+        href={getSSOLoginURL('/chat')}
+        className="bg-harmony-gold text-slate-950 px-4 py-2 rounded-lg text-sm font-medium hover:bg-harmony-gold/90 transition-all active:scale-95"
       >
         Đăng nhập
       </Link>
@@ -23,7 +23,7 @@ function HeaderContent() {
   return (
     <div className="flex items-center gap-3">
       <div className="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-full border border-slate-200">
-        <div className="w-6 h-6 bg-harmony-teal rounded-full flex items-center justify-center text-white text-[10px] font-bold">
+        <div className="w-6 h-6 bg-harmony-gold rounded-full flex items-center justify-center text-slate-950 text-[10px] font-bold">
           {user.name?.[0]?.toUpperCase() || 'U'}
         </div>
         <span className="text-xs font-medium text-slate-700">{user.name || 'Người dùng'}</span>
@@ -35,15 +35,18 @@ function HeaderContent() {
           </svg>
         </button>
         <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-lg py-2 hidden group-hover:block z-50">
-          <Link href="/dashboard" className="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-harmony-teal">
-            Dashboard
+          <Link href="https://harmony.vutera.net/dashboard" className="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-harmony-gold">
+            Harmony Hub
           </Link>
-          <Link href="/account" className="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-harmony-teal">
-            Tài khoản
+          <Link href="/journal" className="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-harmony-gold">
+            Nhật Ký Vận Mệnh
+          </Link>
+          <Link href="/reports" className="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-harmony-gold">
+            Báo Cáo PDF
           </Link>
           <hr className="my-1 border-slate-100" />
           <Link 
-            href={getSSOLogoutURL('/')}
+            href={getSSOLogoutURL('/chat')}
             className="block w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50"
           >
             Đăng xuất
@@ -61,7 +64,7 @@ function MobileHeaderRight() {
 
   return (
     <div className="flex items-center gap-2">
-      <div className="w-8 h-8 bg-harmony-teal rounded-full flex items-center justify-center text-white text-xs font-bold shadow-sm">
+      <div className="w-8 h-8 bg-harmony-gold rounded-full flex items-center justify-center text-slate-950 text-xs font-bold shadow-sm">
         {user.name?.[0]?.toUpperCase() || 'U'}
       </div>
     </div>
@@ -74,8 +77,8 @@ function MobileHeaderContent() {
   if (!user) {
     return (
       <Link 
-        href={getSSOLoginURL('/')}
-        className="block w-full text-center bg-harmony-teal text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-harmony-teal/90 transition-all"
+        href={getSSOLoginURL('/chat')}
+        className="block w-full text-center bg-harmony-gold text-slate-950 px-4 py-2 rounded-lg text-sm font-medium hover:bg-harmony-gold/90 transition-all"
       >
         Đăng nhập
       </Link>
@@ -85,19 +88,22 @@ function MobileHeaderContent() {
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center gap-2 p-2 bg-slate-100 rounded-lg border border-slate-200 mb-2">
-        <div className="w-6 h-6 bg-harmony-teal rounded-full flex items-center justify-center text-white text-[10px] font-bold">
+        <div className="w-6 h-6 bg-harmony-gold rounded-full flex items-center justify-center text-slate-950 text-[10px] font-bold">
           {user.name?.[0]?.toUpperCase() || 'U'}
         </div>
         <span className="text-xs font-medium text-slate-700 truncate">{user.name || 'Người dùng'}</span>
       </div>
-      <Link href="/dashboard" className="block px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 rounded-lg">
-        Dashboard
+      <Link href="https://harmony.vutera.net/dashboard" className="block px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 rounded-lg">
+        Harmony Hub
       </Link>
-      <Link href="/account" className="block px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 rounded-lg">
-        Tài khoản
+      <Link href="/journal" className="block px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 rounded-lg">
+        Nhật Ký Vận Mệnh
+      </Link>
+      <Link href="/reports" className="block px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 rounded-lg">
+        Báo Cáo PDF
       </Link>
       <Link 
-        href={getSSOLogoutURL('/')}
+        href={getSSOLogoutURL('/chat')}
         className="block w-full text-left px-3 py-2 text-sm text-red-500 hover:bg-red-50 rounded-lg"
       >
         Đăng xuất
@@ -106,19 +112,20 @@ function MobileHeaderContent() {
   );
 }
 
-export function HarmonyHeader() {
+export function MenhAnHeader() {
   return (
     <BrandHeader 
-      appName="Harmony AI" 
+      appName="MenhAn Sanctuary" 
       appUrl="/" 
       navLinks={[
-        { label: "TuVi App", href: "https://tuvi.vutera.net" },
-        { label: "MenhAn Sanctuary", href: "https://menhan.vutera.net" },
-        { label: "Câu chuyện", href: "#intro" },
+        { label: "Trò chuyện AI", href: "/chat" },
+        { label: "Nhật ký", href: "/journal" },
+        { label: "Báo cáo", href: "/reports" },
       ]}
       rightContent={<HeaderContent />}
       mobileHeaderRight={<MobileHeaderRight />}
       mobileRightContent={<MobileHeaderContent />}
+      variant="dark"
     />
   );
 }

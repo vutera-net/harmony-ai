@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { BrandHeader } from '@harmony/ui';
-import { useAuthContext, AuthProvider } from '@harmony/auth/context';
+import { useAuthContext } from '@harmony/auth/context';
 import Link from 'next/link';
 import { getSSOLoginURL, getSSOLogoutURL } from '@harmony/auth';
 
@@ -35,11 +35,11 @@ function HeaderContent() {
           </svg>
         </button>
         <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-lg py-2 hidden group-hover:block z-50">
-          <Link href="/dashboard" className="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-harmony-teal">
-            Dashboard
+          <Link href="https://harmony.vutera.net/dashboard" className="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-harmony-teal">
+            Harmony Hub
           </Link>
-          <Link href="/account" className="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-harmony-teal">
-            Tài khoản
+          <Link href="https://menhan.vutera.net/chat" className="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-harmony-teal">
+            Vào Sanctuary
           </Link>
           <hr className="my-1 border-slate-100" />
           <Link 
@@ -90,11 +90,11 @@ function MobileHeaderContent() {
         </div>
         <span className="text-xs font-medium text-slate-700 truncate">{user.name || 'Người dùng'}</span>
       </div>
-      <Link href="/dashboard" className="block px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 rounded-lg">
-        Dashboard
+      <Link href="https://harmony.vutera.net/dashboard" className="block px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 rounded-lg">
+        Harmony Hub
       </Link>
-      <Link href="/account" className="block px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 rounded-lg">
-        Tài khoản
+      <Link href="https://menhan.vutera.net/chat" className="block px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 rounded-lg">
+        Vào Sanctuary
       </Link>
       <Link 
         href={getSSOLogoutURL('/')}
@@ -106,19 +106,20 @@ function MobileHeaderContent() {
   );
 }
 
-export function HarmonyHeader() {
+export function TuViHeader() {
   return (
     <BrandHeader 
-      appName="Harmony AI" 
+      appName="TuVi App" 
       appUrl="/" 
       navLinks={[
-        { label: "TuVi App", href: "https://tuvi.vutera.net" },
-        { label: "MenhAn Sanctuary", href: "https://menhan.vutera.net" },
-        { label: "Câu chuyện", href: "#intro" },
+        { label: "Lịch Vạn Niên", href: "/tools/calendar" },
+        { label: "Ngày Tốt Xấu", href: "/tools/lucky-days" },
+        { label: "Xem Tử Vi", href: "/tu-vi" },
       ]}
       rightContent={<HeaderContent />}
       mobileHeaderRight={<MobileHeaderRight />}
       mobileRightContent={<MobileHeaderContent />}
+      variant="light"
     />
   );
 }

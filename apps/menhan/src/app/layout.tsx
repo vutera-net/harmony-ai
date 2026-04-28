@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "@harmony/auth";
 import { BrandFooter } from "@harmony/ui";
-import { Header } from "@/components/Header";
+import { MenhAnHeader } from "@/components/MenhAnHeader";
 
 export const metadata: Metadata = {
   title: "MenhAn Sanctuary | AI Mentor",
@@ -18,7 +18,7 @@ export default function RootLayout({
     <html lang="vi" suppressHydrationWarning>
       <body className="min-h-screen antialiased selection:bg-harmony-gold/30 flex flex-col">
         <AuthProvider>
-          <Header />
+          <MenhAnHeader />
           <main className="flex-grow">
             {children}
           </main>
