@@ -57,6 +57,47 @@ function HeaderContent() {
   );
 }
 
+function MobileHeaderContent() {
+  const { user } = useAuthContext();
+
+  if (!user) {
+    return (
+      <Link 
+        href={getSSOLoginURL('/')}
+        className="block w-full text-center bg-harmony-teal text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-harmony-teal/90 transition-all"
+      >
+        Đăng nhập
+      </Link>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center gap-2 p-2 bg-slate-100 rounded-lg border border-slate-200 mb-2">
+        <div className="w-6 h-6 bg-harmony-teal rounded-full flex items-center justify-center text-white text-[10px] font-bold">
+          {user.name?.[0]?.toUpperCase() || 'U'}
+        </div>
+        <span className="text-xs font-medium text-slate-700 truncate">{user.name || 'Người dùng'}</span>
+      </div>
+      <Link href="/dashboard" className="block px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 rounded-lg">
+        Dashboard
+      </Link>
+      <Link href="/account" className="block px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 rounded-lg">
+        Tài khoản
+      </Link>
+      <button 
+        onClick={async () => {
+          await logout();
+          window.location.href = '/';
+        }}
+        className="block w-full text-left px-3 py-2 text-sm text-red-500 hover:bg-red-50 rounded-lg"
+      >
+        Đăng xuất
+      </button>
+    </div>
+  );
+}
+
 export function HarmonyHeader() {
   return (
     <BrandHeader 
@@ -68,6 +109,7 @@ export function HarmonyHeader() {
         { label: "Câu chuyện", href: "#intro" },
       ]}
       rightContent={<HeaderContent />}
+      mobileRightContent={<MobileHeaderContent />}
     />
   );
 }

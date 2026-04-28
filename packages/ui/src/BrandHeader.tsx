@@ -9,6 +9,7 @@ interface BrandHeaderProps {
   navLinks?: { label: string; href: string }[];
   showAuth?: boolean;
   rightContent?: React.ReactNode;
+  mobileRightContent?: React.ReactNode;
   variant?: 'light' | 'dark';
 }
 
@@ -18,6 +19,7 @@ export function BrandHeader({
   navLinks = [],
   showAuth = false,
   rightContent,
+  mobileRightContent,
   variant = 'light',
 }: BrandHeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -75,7 +77,9 @@ export function BrandHeader({
 
           {/* Right side */}
           <div className="flex items-center gap-3">
-            {rightContent}
+            <div className="hidden md:flex items-center gap-3">
+              {rightContent}
+            </div>
             {showAuth && (
               <div className="text-xs text-slate-400 italic bg-slate-100 px-2 py-1 rounded-md">Xác thực đã bật</div>
             )}
@@ -110,6 +114,11 @@ export function BrandHeader({
                 {link.label}
               </Link>
             ))}
+            {mobileRightContent && (
+              <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-800">
+                {mobileRightContent}
+              </div>
+            )}
           </nav>
         </div>
       )}
