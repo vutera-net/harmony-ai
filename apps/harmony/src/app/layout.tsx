@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { BrandHeader, BrandFooter } from "@harmony/ui";
+import { AuthProvider } from "@harmony/auth/context";
+import { HarmonyHeader } from "@/components/HarmonyHeader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,19 +32,13 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <BrandHeader 
-          appName="Harmony AI" 
-          appUrl="/" 
-          navLinks={[
-            { label: "TuVi App", href: "https://tuvi.vutera.net" },
-            { label: "MenhAn Sanctuary", href: "https://menhan.vutera.net" },
-            { label: "Câu chuyện", href: "#intro" },
-          ]}
-        />
-        <main className="flex-grow">
-          {children}
-        </main>
-        <BrandFooter />
+        <AuthProvider>
+          <HarmonyHeader />
+          <main className="flex-grow">
+            {children}
+          </main>
+          <BrandFooter />
+        </AuthProvider>
       </body>
     </html>
   );
