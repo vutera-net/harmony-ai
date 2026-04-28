@@ -112,7 +112,7 @@ import { createAuthMiddleware } from "@harmony/auth/middleware";
 const middleware = createAuthMiddleware({
   protectedRoutes: ["/private", "/dashboard"], // Require login
   publicRoutes: ["/", "/about"],               // Accessible without login
-  loginUrl?: "http://localhost:3000/auth/login"; // Redirect URL
+  loginUrl?: "http://localhost:4000/auth/login"; // Redirect URL
   tokenCookieName?: "auth_token";               // Cookie name
 });
 ```

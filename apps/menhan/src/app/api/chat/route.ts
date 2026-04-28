@@ -6,7 +6,7 @@ import { buildSystemPrompt } from "@/lib/master-ai-prompt";
 import { getAIProvider, AIMessage } from "@harmony/ai-provider";
 import { PaymentService } from "@/lib/payments/payment-service";
 
-const SSO_URL = process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3000";
+const SSO_URL = process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:4000";
 const db = prisma;
 
 /**
