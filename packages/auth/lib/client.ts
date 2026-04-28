@@ -142,6 +142,8 @@ export async function register(
   return response.json();
 }
 
+// ... (keep existing imports and types)
+
 /**
  * Get SSO redirect URL for login
  * Useful for OAuth or cross-domain navigation
@@ -159,6 +161,22 @@ export function getSSOLoginURL(
   }
   return url.toString();
 }
+
+/**
+ * Get SSO redirect URL for logout
+ * Ensures the session is cleared at the Identity Provider level
+ */
+export function getSSOLogoutURL(redirectTo?: string): string {
+  const url = new URL(`${SSO_DOMAIN}/auth/logout`);
+  if (redirectTo) {
+    url.searchParams.set("redirect", redirectTo);
+  }
+  return url.toString();
+}
+
+/**
+ * Extract JWT token from Authorization header or cookie
+// ... (rest of the file)
 
 /**
  * Extract JWT token from Authorization header or cookie
