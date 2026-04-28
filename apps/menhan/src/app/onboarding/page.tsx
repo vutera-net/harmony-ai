@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function OnboardingPage() {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [isMagicLoading, setIsMagicLoading] = useState(false);
+  const [magicStep, setMagicStep] = useState(0);
   const [formData, setFormData] = useState({
     gender: "MALE",
     birthDate: "",
@@ -15,6 +17,39 @@ export default function OnboardingPage() {
     birthTimezone: "Asia/Ho_Chi_Minh",
   });
   const [error, setError] = useState("");
+
+  const magicMessages = [
+    "Đang kết nối với tinh tú...",
+    "Master AI đang chiêm nghiệm lá số của bạn...",
+    "Thiết lập Sanctuary riêng tư...",
+    "Khởi tạo hành trình bình an...",
+  ];
+
+  useEffect(() => {
+    async function fetchProfile() {
+      try {
+        const res = await fetch("/api/profile");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.profile) {
+            const p = data.profile;
+            setFormData({
+              gender: p.gender,
+              birthDate: p.birthDate ? new Date(p.birthDate).toISOString().split("T")[0] : "",
+              birthTime: p.birthTime || "",
+              birthLocation: p.birthLocation || "",
+              birthTimezone: p.birthTimezone || "Asia/Ho_Chi_Minh",
+            });
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch initial profile:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProfile();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,13 +68,66 @@ export default function OnboardingPage() {
         throw new Error(data.error || "Something went wrong");
       }
 
+      // Start Magic Moment
+      setIsMagicLoading(true);
+      
+      // Cycle through messages
+      for (let i = 0; i < magicMessages.length; i++) {
+        setMagicStep(i);
+        await new Promise((resolve) => setTimeout(resolve, 1200));
+      }
+
       router.push("/chat");
     } catch (err: any) {
       setError(err.message);
-    } finally {
       setLoading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-harmony-gold"></div>
+      </div>
+    );
+  }
+
+  if (isMagicLoading) {
+    return (
+      <main className="min-h-screen bg-slate-950 text-slate-200 flex items-center justify-center p-6 relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-harmony-gold/10 blur-[120px] rounded-full animate-pulse" />
+        </div>
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="relative z-10 text-center space-y-8"
+        >
+          <div className="relative w-24 h-24 mx-auto">
+            <motion.div 
+              animate={{ rotate: 360 }}
+              transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+              className="absolute inset-0 border-2 border-dashed border-harmony-gold/30 rounded-full"
+            />
+            <div className="absolute inset-0 flex items-center justify-center text-4xl">
+              ✨
+            </div>
+          </div>
+          <AnimatePresence mode="wait">
+            <motion.p 
+              key={magicStep}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="text-xl font-serif italic text-harmony-gold"
+            >
+              {magicMessages[magicStep]}
+            </motion.p>
+          </AnimatePresence>
+        </motion.div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-slate-950 text-slate-200 flex items-center justify-center p-6 relative overflow-hidden">

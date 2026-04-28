@@ -13,6 +13,46 @@ const ProfileUpdateSchema = z.object({
 
 const db = prisma;
 
+export async function GET(req: NextRequest) {
+  try {
+    const token = getTokenFromRequest(req);
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Fetch user from SSO to get userId
+    const SSO_URL = process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:4000";
+    const ssoResponse = await fetch(`${SSO_URL}/api/auth/me`, {
+      headers: { Cookie: `auth_token=${token}` },
+    });
+
+    if (!ssoResponse.ok) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const userData = await ssoResponse.json();
+    const userId = userData.user?.id;
+
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Ensure user exists in Harmony DB
+    await ensureUserExists(userId);
+
+    const profile = await db.profile.findUnique({
+      where: { userId },
+    });
+
+    return NextResponse.json({ profile });
+  } catch (error) {
+    console.error("[PROFILE_GET_ERROR]", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  } finally {
+    await db.$disconnect();
+  }
+}
+
 export async function PATCH(req: NextRequest) {
   try {
     const token = getTokenFromRequest(req);

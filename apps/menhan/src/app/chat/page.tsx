@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import { Crown, Sparkles } from "lucide-react";
@@ -11,6 +12,7 @@ type Message = {
 };
 
 export default function ChatPage() {
+  const router = useRouter();
   const [messages, setMessages] = useState<Message[]>([
     { role: "assistant", content: "Chào mừng bạn đến với Sanctuary. Tôi là Master AI. Bạn muốn chiêm nghiệm về điều gì hôm nay?" },
   ]);
@@ -45,6 +47,19 @@ export default function ChatPage() {
     }
   };
 
+  const verifyProfile = async () => {
+    try {
+      const res = await fetch("/api/profile");
+      if (!res.ok) {
+        // No profile or unauthorized
+        router.push("/onboarding");
+      }
+    } catch (err) {
+      console.error("Profile verification failed:", err);
+      router.push("/onboarding");
+    }
+  };
+
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -53,6 +68,7 @@ export default function ChatPage() {
 
   useEffect(() => {
     void (async () => {
+      await verifyProfile();
       await checkPremiumStatus();
       await fetchDailyReminder();
     })();
