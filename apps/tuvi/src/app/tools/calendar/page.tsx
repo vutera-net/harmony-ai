@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { AuthProvider } from "@harmony/auth/context";
-import { Header } from "@/components/Header";
+import { TuViHeader } from "@/components/TuViHeader";
 import { Footer } from "@/components/Footer";
 import { getMonthCalendarView } from "@/lib/calendar";
 
@@ -50,7 +50,7 @@ function CalendarContent() {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
-      <Header />
+      <TuViHeader />
 
       <main className="flex-1 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">

@@ -1,7 +1,7 @@
 "use client";
 
 import { AuthProvider } from "@harmony/auth/context";
-import { Header } from "@/components/Header";
+import { TuViHeader } from "@/components/TuViHeader";
 import { Hero } from "@/components/Hero";
 import { QuickToolsGrid } from "@/components/QuickToolsGrid";
 import { Footer } from "@/components/Footer";
@@ -9,7 +9,7 @@ import { Footer } from "@/components/Footer";
 function TuViHome() {
   return (
     <div className="flex flex-col min-h-screen bg-white">
-      <Header />
+      <TuViHeader />
       <main className="flex-1">
         <Hero />
         <QuickToolsGrid />
