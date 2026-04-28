@@ -1,4 +1,4 @@
-import { Profile, Element } from "@harmony/database";
+import { Profile } from "@harmony/database";
 import { getLunar } from "chinese-lunar-calendar";
 import { calculateMenhCung, distributeStars, StarDistribution } from "./astrology-engine";
 
@@ -111,7 +111,7 @@ export function buildChartContext(profile: Profile): ChartContext {
 
   // Determine primary element from db or derive from stem
   const element = profile.energyType
-    ? elementVN[profile.energyType as Element]
+    ? elementVN[profile.energyType as string]
     : derivePrimaryElement(stemIndex);
 
   // Advanced Astrology Calculation

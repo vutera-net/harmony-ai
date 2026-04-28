@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useAuthContext } from "@harmony/auth/context";
 
 interface LeadCaptureFormProps {
   zodiac?: string;
@@ -16,7 +17,8 @@ export function LeadCaptureForm({
   year,
   source,
 }: LeadCaptureFormProps) {
-  const [email, setEmail] = useState("");
+  const { user } = useAuthContext();
+  const [email, setEmail] = useState(user?.email || "");
   const [birthYear, setBirthYear] = useState(year?.toString() || "");
   const [loading, setLoading] = useState(false);
   const [aiHook, setAiHook] = useState<string | null>(null);
@@ -112,10 +114,14 @@ export function LeadCaptureForm({
   return (
     <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg p-8 border-2 border-blue-200">
       <h3 className="text-2xl font-bold text-blue-900 mb-2">
-        🔮 Nhận Phân Tích Miễn Phí
+        {user 
+          ? `🔮 Chào ${user.name || 'Bạn'}, hãy khám phá vận mệnh!` 
+          : "🔮 Nhận Phân Tích Miễn Phí"}
       </h3>
       <p className="text-blue-700 mb-6">
-        Để tiếp bước hành trình tìm hiểu bản thân, cần chút thông tin của bạn
+        {user 
+          ? "Chúng tôi đã sẵn sàng kết nối bạn với Master AI tại MenhAn Sanctuary." 
+          : "Để tiếp bước hành trình tìm hiểu bản thân, cần chút thông tin của bạn"}
       </p>
 
       {error && (
@@ -125,19 +131,26 @@ export function LeadCaptureForm({
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Email Input */}
+        {/* Email Input - Hidden or Read-only if authenticated */}
         <div>
           <label className="block text-sm font-semibold text-blue-900 mb-2">
             Email của bạn
           </label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="your@email.com"
-            required
-            className="w-full px-4 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900"
-          />
+          {user ? (
+            <div className="w-full px-4 py-2 bg-blue-100 border border-blue-200 rounded-lg text-blue-700 text-sm font-medium flex justify-between items-center">
+              {user.email}
+              <span className="text-[10px] bg-blue-200 px-2 py-0.5 rounded-full uppercase">Đã xác thực</span>
+            </div>
+          ) : (
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="your@email.com"
+              required
+              className="w-full px-4 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900"
+            />
+          )}
         </div>
 
         {/* Birth Year Input (if not pre-filled) */}
@@ -165,7 +178,7 @@ export function LeadCaptureForm({
           disabled={loading}
           className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition disabled:opacity-50"
         >
-          {loading ? "Đang xử lý..." : "Gửi và Xem Tiết Lộ"}
+          {loading ? "Đang xử lý..." : user ? "Kết nối với MenhAn Ngay →" : "Gửi và Xem Tiết Lộ"}
         </button>
 
         <p className="text-xs text-blue-600 text-center">

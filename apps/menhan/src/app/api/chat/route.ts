@@ -1,19 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getTokenFromRequest } from "@harmony/auth/middleware";
-import { PrismaClient } from "@harmony/database";
+import { prisma, ensureUserExists } from "@harmony/database";
 import { buildChartContext, formatChartForPrompt } from "@/lib/chart-context";
 import { buildSystemPrompt } from "@/lib/master-ai-prompt";
 import { getAIProvider, AIMessage } from "@harmony/ai-provider";
 import { PaymentService } from "@/lib/payments/payment-service";
 
-const SSO_URL = process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3000";
-const db = new PrismaClient();
+const SSO_URL = process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:4000";
+const db = prisma;
 
 /**
  * Fetch user's profile and premium status
  */
 async function getUserContext(userId: string) {
   try {
+    // Ensure user exists before fetching context
+    await ensureUserExists(userId);
+
     const profile = await db.profile.findUnique({
       where: { userId },
     });

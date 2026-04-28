@@ -67,7 +67,7 @@ Create `.env` file in this directory:
 
 ```bash
 # .env (DO NOT COMMIT to git)
-DATABASE_URL="postgresql://user:password@localhost:5432/harmony_db?schema=public"
+DATABASE_URL="postgresql://user:password@localhost:5432/harmony?schema=public"
 ```
 
 Or use Prisma Postgres dev server:

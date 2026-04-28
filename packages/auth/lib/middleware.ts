@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const SSO_URL = process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3000";
+const SSO_URL = process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:4000";
 const PROTECTED_ROUTES = ["/private", "/dashboard", "/profile", "/settings"];
 
 /**

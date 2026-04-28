@@ -1,15 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@harmony/database";
+import { prisma, ensureUserExists } from "@harmony/database";
 import { getTokenFromRequest } from "@harmony/auth/middleware";
 import { getAIProvider } from "@harmony/ai-provider";
 
-const db = new PrismaClient();
+const db = prisma;
 
 async function getUserId(req: NextRequest) {
   const token = getTokenFromRequest(req);
   if (!token) return null;
 
-  const SSO_URL = process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3000";
+  const SSO_URL = process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:4000";
   const ssoResponse = await fetch(`${SSO_URL}/api/auth/me`, {
     headers: { Cookie: `auth_token=${token}` },
   });
@@ -26,6 +26,9 @@ export async function GET(req: NextRequest) {
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    // Ensure user exists in Harmony DB
+    await ensureUserExists(userId);
 
     const subscription = await db.subscription.findFirst({ where: { userId } });
     if (subscription?.plan === "FREE") {

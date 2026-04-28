@@ -19,7 +19,7 @@ Each app directory already has a `.env.local` file with placeholder values. Upda
 ```
 JWT_SECRET=your-secure-jwt-secret-min-32-chars
 NODE_ENV=development
-NEXT_PUBLIC_API_URL=http://localhost:3000
+NEXT_PUBLIC_API_URL=http://localhost:4000
 ```
 
 **`apps/tuvi/.env.local`** (TuVi App):
@@ -70,10 +70,10 @@ pnpm dev
 To avoid random ports during development and ensure SSO configuration works, update the `dev` scripts in each app's `package.json` (e.g., `"dev": "next dev -p 3000"`).
 
 **Recommended Ports:**
-- Identity: `http://localhost:3000`
-- MenhAn: `http://localhost:3001`
-- Harmony: `http://localhost:3002`
-- TuVi: `http://localhost:3003`
+- Identity: `http://localhost:4000`
+- MenhAn: `http://localhost:4001`
+- Harmony: `http://localhost:4002`
+- TuVi: `http://localhost:4003`
 
 Then start all applications:
 ```bash

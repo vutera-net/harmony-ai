@@ -11,7 +11,7 @@ export interface AuthUser {
   subscription: any | null;
 }
 
-const SSO_DOMAIN = process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:3000";
+const SSO_DOMAIN = process.env.NEXT_PUBLIC_SSO_URL || "http://localhost:4000";
 
 /**
  * Hook to fetch current authenticated user
