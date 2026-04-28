@@ -49,17 +49,6 @@ model User {
   payments       Payment[]
 }
 
-// ... (keep existing enums)
-
-model User {
-  id            String         @id // No default(cuid()) because ID comes from vutera-id
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  profile       Profile?
-  subscriptions Subscription[]
-  journalEntries JournalEntry[]
-  payments       Payment[]
-}
 
 model Profile {
   id            String    @id @default(cuid())
