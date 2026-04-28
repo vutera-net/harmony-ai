@@ -94,9 +94,11 @@ export async function logout() {
       credentials: "include",
     });
 
-    window.location.href = `${SSO_DOMAIN}/auth/login`;
+    window.location.href = getSSOLogoutURL('/');
   } catch (err) {
     console.error("Logout failed:", err);
+    // Fallback to SSO logout even if local logout fails
+    window.location.href = getSSOLogoutURL('/');
   }
 }
 
