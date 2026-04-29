@@ -44,17 +44,17 @@ export async function GET(req: NextRequest) {
       where: { userId },
     });
 
-    if (!profile && userData.user?.birthDate) {
+    if (!profile && userData.user?.profile?.birthDate) {
       // Auto-sync profile from SSO if not exists and SSO has birth info
-      const user = userData.user;
+      const ssoProfile = userData.user.profile;
       await db.profile.create({
         data: {
           userId,
-          gender: user.gender,
-          birthDate: new Date(user.birthDate),
-          birthTime: user.birthTime || null,
-          birthLocation: user.birthLocation,
-          birthTimezone: user.birthTimezone || "Asia/Ho_Chi_Minh",
+          gender: ssoProfile.gender,
+          birthDate: new Date(ssoProfile.birthDate),
+          birthTime: ssoProfile.birthTime || null,
+          birthLocation: ssoProfile.birthLocation,
+          birthTimezone: ssoProfile.birthTimezone || "Asia/Ho_Chi_Minh",
         },
       });
       
