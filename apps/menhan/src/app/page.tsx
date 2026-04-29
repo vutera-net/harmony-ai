@@ -40,19 +40,29 @@ export default function Page() {
               Đang tải...
             </div>
           ) : (
-            <Link 
-              href="/onboarding" 
-              className="px-8 py-4 bg-harmony-gold text-slate-950 font-medium rounded-full hover:bg-harmony-gold/90 transition-all hover:scale-105 active:scale-95 shadow-lg shadow-harmony-gold/20 w-full sm:w-auto text-center"
-            >
-              {hasProfile ? "Cập nhật thông tin" : "Bắt đầu hành trình"}
-            </Link>
+            <>
+              <Link 
+                href="/chat" 
+                className={`px-8 py-4 font-medium rounded-full transition-all hover:scale-105 active:scale-95 shadow-lg w-full sm:w-auto text-center ${
+                  hasProfile 
+                    ? "bg-harmony-gold text-slate-950 hover:bg-harmony-gold/90 shadow-harmony-gold/20" 
+                    : "bg-transparent border border-slate-700 text-slate-300 hover:bg-slate-800"
+                }`}
+              >
+                Trò chuyện cùng Master AI
+              </Link>
+              <Link 
+                href="/onboarding" 
+                className={`px-8 py-4 font-medium rounded-full transition-all w-full sm:w-auto text-center ${
+                  hasProfile 
+                    ? "bg-transparent border border-slate-700 text-slate-300 hover:bg-slate-800" 
+                    : "bg-harmony-gold text-slate-950 hover:bg-harmony-gold/90 shadow-lg shadow-harmony-gold/20 hover:scale-105 active:scale-95"
+                }`}
+              >
+                {hasProfile ? "Cập nhật thông tin" : "Bắt đầu hành trình"}
+              </Link>
+            </>
           )}
-          <Link 
-            href="/chat" 
-            className="px-8 py-4 bg-transparent border border-slate-700 text-slate-300 font-medium rounded-full hover:bg-slate-800 transition-all w-full sm:w-auto text-center"
-          >
-            Trò chuyện cùng Master AI
-          </Link>
         </div>
 
         <div className="pt-20 grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
