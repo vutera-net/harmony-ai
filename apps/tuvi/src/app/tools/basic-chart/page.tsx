@@ -5,6 +5,7 @@ import { AuthProvider, useAuthContext } from "@harmony/auth/context";
 import { TuViHeader } from "@/components/TuViHeader";
 import { Footer } from "@/components/Footer";
 import { getBasicChart } from "@/lib/calendar";
+import { DatePicker } from "@harmony/ui";
 
 function BasicChartContent() {
   const { user } = useAuthContext();
@@ -36,10 +37,6 @@ function BasicChartContent() {
     }
   };
 
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDate(e.target.value);
-  };
-
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
       <TuViHeader />
@@ -69,31 +66,31 @@ function BasicChartContent() {
           {/* Input Section */}
           <div className="bg-white rounded-lg shadow-md p-8 mb-8">
             <div className="max-w-md">
-              <div className="flex items-center justify-between mb-3">
-                <label className="text-sm font-medium text-slate-700">
-                  Ngày Sinh (Dương Lịch)
-                </label>
-                {autoFilled && (
-                  <span className="text-xs text-harmony-teal font-medium bg-harmony-teal/10 px-2 py-0.5 rounded-full">
-                    ✓ Lấy từ hồ sơ
-                  </span>
-                )}
-              </div>
-              <div className="flex gap-3">
-                <input
-                  type="date"
-                  value={date}
-                  onChange={(e) => { handleDateChange(e); setAutoFilled(false); }}
-                  className="flex-1 px-4 py-2.5 border border-slate-400 rounded-lg bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-harmony-teal focus:border-harmony-teal transition"
-                />
-                <button
-                  onClick={handleCalculate}
-                  disabled={loading}
-                  className="px-6 py-2 bg-harmony-teal text-white rounded-lg hover:bg-harmony-teal/90 disabled:opacity-50 font-medium transition"
-                >
-                  {loading ? "Đang tính..." : "Xem Lá Số"}
-                </button>
-              </div>
+               <div className="flex items-center justify-between mb-3">
+                 <label className="text-sm font-medium text-slate-700">
+                   Ngày Sinh (Dương Lịch)
+                 </label>
+                 {autoFilled && (
+                   <span className="text-xs text-harmony-teal font-medium bg-harmony-teal/10 px-2 py-0.5 rounded-full">
+                     ✓ Lấy từ hồ sơ
+                   </span>
+                 )}
+               </div>
+               <div className="flex gap-3 items-end">
+                 <DatePicker
+                   value={date}
+                   onChange={(val) => { setDate(val); setAutoFilled(false); }}
+                   className="flex-1"
+                 />
+                 <button
+                   onClick={handleCalculate}
+                   disabled={loading}
+                   className="px-6 py-2 bg-harmony-teal text-white rounded-lg hover:bg-harmony-teal/90 disabled:opacity-50 font-medium transition h-[42px]"
+                 >
+                   {loading ? "Đang tính..." : "Xem Lá Số"}
+                 </button>
+               </div>
+
               <p className="text-xs text-slate-500 mt-2">
                 💡 Chỉ cần ngày tháng năm, giờ sinh không bắt buộc
               </p>

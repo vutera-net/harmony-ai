@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import { DatePicker } from "@harmony/ui";
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -172,13 +173,11 @@ export default function OnboardingPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm text-slate-400 ml-1">Ngày sinh</label>
-              <input
-                type="date"
-                required
+              <DatePicker
+                label="Ngày sinh"
                 value={formData.birthDate}
-                onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })}
-                className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-xl text-slate-200 focus:ring-2 focus:ring-harmony-gold/50 outline-none transition-all"
+                onChange={(date) => setFormData({ ...formData, birthDate: date })}
+                className="w-full"
               />
             </div>
           </div>
