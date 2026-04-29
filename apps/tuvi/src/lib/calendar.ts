@@ -90,7 +90,7 @@ export function toLunarDate(year: number, month: number, day: number): CalendarI
 
   return {
     solarDate: `${year}/${month}/${day}`,
-    lunarDate: `${year}/${lunar.lunarMonth}/${lunar.lunarDate}`,
+    lunarDate: `${lunar.lunarDate}/${lunar.lunarMonth}/${year}`,
     lunarMonth: lunar.lunarMonth,
     lunarDay: lunar.lunarDate,
     lunarYear: lunarYear,

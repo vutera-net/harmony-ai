@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Calendar, BookOpen, Sparkles, CheckCircle2, XCircle, Clock } from "lucide-react";
-import { DatePicker, formatDateVN } from "@harmony/ui";
+import { formatDateVN } from "@/lib/date-utils";
 
 type JournalEntry = {
   id: string;
@@ -108,15 +108,50 @@ export default function JournalPage() {
               <Sparkles size={18} /> Ghi chép sự kiện
             </h3>
             <form onSubmit={addEntry} className="space-y-4">
-               <div>
-                 <DatePicker
-                   label="Ngày xảy ra"
-                   value={eventDate}
-                   onChange={(date) => setEventDate(date)}
-                   className="w-full"
-                 />
-               </div>
-
+              <div>
+                <label className="text-xs text-slate-500 block mb-1 ml-1">Ngày xảy ra</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {(() => {
+                    const [y, m, d] = eventDate.split("-");
+                    return (
+                      <>
+                        <select
+                          value={d}
+                          onChange={(e) => setEventDate(`${y}-${m}-${e.target.value.padStart(2, "0")}`)}
+                          className="px-2 py-2 bg-slate-800 border border-slate-700 rounded-xl text-slate-200 focus:ring-2 focus:ring-harmony-gold/50 outline-none transition-all text-xs"
+                        >
+                          {Array.from({ length: 31 }, (_, i) => (
+                            <option key={i + 1} value={(i + 1).toString().padStart(2, "0")}>
+                              {i + 1}
+                            </option>
+                          ))}
+                        </select>
+                        <select
+                          value={m}
+                          onChange={(e) => setEventDate(`${y}-${e.target.value.padStart(2, "0")}-${d}`)}
+                          className="px-2 py-2 bg-slate-800 border border-slate-700 rounded-xl text-slate-200 focus:ring-2 focus:ring-harmony-gold/50 outline-none transition-all text-xs"
+                        >
+                          {Array.from({ length: 12 }, (_, i) => (
+                            <option key={i + 1} value={(i + 1).toString().padStart(2, "0")}>
+                              Tháng {i + 1}
+                            </option>
+                          ))}
+                        </select>
+                        <select
+                          value={y}
+                          onChange={(e) => setEventDate(`${e.target.value}-${m}-${d}`)}
+                          className="px-2 py-2 bg-slate-800 border border-slate-700 rounded-xl text-slate-200 focus:ring-2 focus:ring-harmony-gold/50 outline-none transition-all text-xs"
+                        >
+                          {Array.from({ length: 10 }, (_, i) => {
+                            const year = new Date().getFullYear() - i;
+                            return <option key={year} value={year}>{year}</option>;
+                          })}
+                        </select>
+                      </>
+                    );
+                  })()}
+                </div>
+              </div>
               <div>
                 <label className="text-xs text-slate-500 block mb-1 ml-1">Mô tả sự kiện</label>
                 <textarea
@@ -167,10 +202,9 @@ export default function JournalPage() {
                   <div className="p-5 bg-slate-900/50 border border-slate-800 rounded-2xl backdrop-blur-sm hover:border-slate-700 transition-all group">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2 text-xs text-slate-500">
-                         <Calendar size={14} />
-                         {formatDateVN(entry.eventDate)}
-                       </div>
-
+                        <Calendar size={14} />
+                        {formatDateVN(entry.eventDate)}
+                      </div>
                       <div className="flex items-center gap-2">
                         {entry.status === "verified" && <span className="text-[10px] bg-green-500/10 text-green-500 px-2 py-0.5 rounded-full border border-green-500/20 flex items-center gap-1"><CheckCircle2 size={10} /> Đúng dự báo</span>}
                         {entry.status === "mismatch" && <span className="text-[10px] bg-red-500/10 text-red-500 px-2 py-0.5 rounded-full border border-red-500/20 flex items-center gap-1"><XCircle size={10} /> Sai lệch</span>}
