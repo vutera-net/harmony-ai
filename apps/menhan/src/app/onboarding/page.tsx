@@ -170,19 +170,52 @@ export default function OnboardingPage() {
                 ))}
               </div>
             </div>
-
             <div className="space-y-2">
               <label className="text-sm text-slate-400 ml-1">Ngày sinh</label>
-              <input
-                type="date"
-                required
-                value={formData.birthDate}
-                onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })}
-                className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-xl text-slate-200 focus:ring-2 focus:ring-harmony-gold/50 outline-none transition-all"
-              />
+               <div className="grid grid-cols-[1fr_1.5fr_1fr] gap-2">
+
+                {(() => {
+                  const [y, m, d] = formData.birthDate.split("-");
+                  return (
+                    <>
+                      <select
+                        value={d}
+                        onChange={(e) => setFormData({ ...formData, birthDate: `${y}-${m}-${e.target.value.padStart(2, "0")}` })}
+                        className="px-2 py-2 bg-slate-800 border border-slate-700 rounded-xl text-slate-200 focus:ring-2 focus:ring-harmony-gold/50 outline-none transition-all text-sm"
+                      >
+                        {Array.from({ length: 31 }, (_, i) => (
+                          <option key={i + 1} value={(i + 1).toString().padStart(2, "0")}>
+                            {i + 1}
+                          </option>
+                        ))}
+                      </select>
+                      <select
+                        value={m}
+                        onChange={(e) => setFormData({ ...formData, birthDate: `${y}-${e.target.value.padStart(2, "0")}-${d}` })}
+                        className="px-2 py-2 bg-slate-800 border border-slate-700 rounded-xl text-slate-200 focus:ring-2 focus:ring-harmony-gold/50 outline-none transition-all text-sm"
+                      >
+                        {Array.from({ length: 12 }, (_, i) => (
+                          <option key={i + 1} value={(i + 1).toString().padStart(2, "0")}>
+                            Tháng {i + 1}
+                          </option>
+                        ))}
+                      </select>
+                      <select
+                        value={y}
+                        onChange={(e) => setFormData({ ...formData, birthDate: `${e.target.value}-${m}-${d}` })}
+                        className="px-2 py-2 bg-slate-800 border border-slate-700 rounded-xl text-slate-200 focus:ring-2 focus:ring-harmony-gold/50 outline-none transition-all text-sm"
+                      >
+                        {Array.from({ length: 120 }, (_, i) => {
+                          const year = new Date().getFullYear() - i;
+                          return <option key={year} value={year}>{year}</option>;
+                        })}
+                      </select>
+                    </>
+                  );
+                })()}
+              </div>
             </div>
           </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <label className="text-sm text-slate-400 ml-1">Giờ sinh (HH:mm)</label>
@@ -194,7 +227,6 @@ export default function OnboardingPage() {
                 className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-xl text-slate-200 focus:ring-2 focus:ring-harmony-gold/50 outline-none transition-all"
               />
             </div>
-
             <div className="space-y-2">
               <label className="text-sm text-slate-400 ml-1">Múi giờ</label>
               <select
@@ -209,8 +241,8 @@ export default function OnboardingPage() {
               </select>
             </div>
           </div>
+           <div className="space-y-2">
 
-          <div className="space-y-2">
             <label className="text-sm text-slate-400 ml-1">Nơi sinh (Thành phố, Tỉnh)</label>
             <input
               type="text"

@@ -5,6 +5,7 @@ import { AuthProvider, useAuthContext } from "@harmony/auth/context";
 import { TuViHeader } from "@/components/TuViHeader";
 import { Footer } from "@/components/Footer";
 import { getBasicChart } from "@/lib/calendar";
+import { formatDateVN } from "@/lib/date-utils";
 
 function BasicChartContent() {
   const { user } = useAuthContext();
@@ -69,31 +70,63 @@ function BasicChartContent() {
           {/* Input Section */}
           <div className="bg-white rounded-lg shadow-md p-8 mb-8">
             <div className="max-w-md">
-              <div className="flex items-center justify-between mb-3">
-                <label className="text-sm font-medium text-slate-700">
-                  Ngày Sinh (Dương Lịch)
-                </label>
-                {autoFilled && (
-                  <span className="text-xs text-harmony-teal font-medium bg-harmony-teal/10 px-2 py-0.5 rounded-full">
-                    ✓ Lấy từ hồ sơ
-                  </span>
-                )}
-              </div>
-              <div className="flex gap-3">
-                <input
-                  type="date"
-                  value={date}
-                  onChange={(e) => { handleDateChange(e); setAutoFilled(false); }}
-                  className="flex-1 px-4 py-2.5 border border-slate-400 rounded-lg bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-harmony-teal focus:border-harmony-teal transition"
-                />
-                <button
-                  onClick={handleCalculate}
-                  disabled={loading}
-                  className="px-6 py-2 bg-harmony-teal text-white rounded-lg hover:bg-harmony-teal/90 disabled:opacity-50 font-medium transition"
-                >
-                  {loading ? "Đang tính..." : "Xem Lá Số"}
-                </button>
-              </div>
+               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-3">
+                 <label className="text-sm font-medium text-slate-700">
+                   Ngày Sinh (Dương Lịch)
+                 </label>
+                 <div className="flex flex-wrap items-center gap-2">
+                   <div className="flex gap-2">
+                     {(() => {
+                       const [y, m, d] = date.split("-");
+                       return (
+                         <>
+                           <select
+                             value={d}
+                             onChange={(e) => { setDate(`${y}-${m}-${e.target.value.padStart(2, "0")}`); setAutoFilled(false); }}
+                             className="px-2 py-2.5 border border-slate-400 rounded-lg bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-harmony-teal focus:border-harmony-teal transition text-sm"
+                           >
+                             {Array.from({ length: 31 }, (_, i) => (
+                               <option key={i + 1} value={(i + 1).toString().padStart(2, "0")}>
+                                 {i + 1}
+                               </option>
+                             ))}
+                           </select>
+                           <select
+                             value={m}
+                             onChange={(e) => { setDate(`${y}-${e.target.value.padStart(2, "0")}-${d}`); setAutoFilled(false); }}
+                             className="px-2 py-2.5 border border-slate-400 rounded-lg bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-harmony-teal focus:border-harmony-teal transition text-sm"
+                           >
+                             {Array.from({ length: 12 }, (_, i) => (
+                               <option key={i + 1} value={(i + 1).toString().padStart(2, "0")}>
+                                 Tháng {i + 1}
+                               </option>
+                             ))}
+                           </select>
+                           <select
+                             value={y}
+                             onChange={(e) => { setDate(`${e.target.value}-${m}-${d}`); setAutoFilled(false); }}
+                             className="px-2 py-2.5 border border-slate-400 rounded-lg bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-harmony-teal focus:border-harmony-teal transition text-sm"
+                           >
+                             {Array.from({ length: 120 }, (_, i) => {
+                               const year = new Date().getFullYear() - i;
+                               return <option key={year} value={year}>{year}</option>;
+                             })}
+                           </select>
+                         </>
+                       );
+                     })()}
+                   </div>
+ 
+                   <button
+                     onClick={handleCalculate}
+                     disabled={loading}
+                     className="px-6 py-2 bg-harmony-teal text-white rounded-lg hover:bg-harmony-teal/90 disabled:opacity-50 font-medium transition"
+                   >
+                     {loading ? "Đang tính..." : "Xem Lá Số"}
+                   </button>
+                 </div>
+               </div>
+
               <p className="text-xs text-slate-500 mt-2">
                 💡 Chỉ cần ngày tháng năm, giờ sinh không bắt buộc
               </p>
@@ -108,9 +141,10 @@ function BasicChartContent() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <p className="text-sm text-slate-600">Ngày Sinh (Dương)</p>
-                    <p className="text-lg font-bold text-slate-900">
-                      {chart.solarDate}
-                    </p>
+                     <p className="text-lg font-bold text-slate-900">
+                       {formatDateVN(chart.solarDate)}
+                     </p>
+
                   </div>
                   <div>
                     <p className="text-sm text-slate-600">Ngày Sinh (Âm)</p>

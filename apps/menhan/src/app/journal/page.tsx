@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Calendar, BookOpen, Sparkles, CheckCircle2, XCircle, Clock } from "lucide-react";
+import { formatDateVN } from "@/lib/date-utils";
 
 type JournalEntry = {
   id: string;
@@ -109,12 +110,47 @@ export default function JournalPage() {
             <form onSubmit={addEntry} className="space-y-4">
               <div>
                 <label className="text-xs text-slate-500 block mb-1 ml-1">Ngày xảy ra</label>
-                <input
-                  type="date"
-                  value={eventDate}
-                  onChange={(e) => setEventDate(e.target.value)}
-                  className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-xl text-slate-200 focus:ring-2 focus:ring-harmony-gold/50 outline-none transition-all"
-                />
+                <div className="grid grid-cols-3 gap-2">
+                  {(() => {
+                    const [y, m, d] = eventDate.split("-");
+                    return (
+                      <>
+                        <select
+                          value={d}
+                          onChange={(e) => setEventDate(`${y}-${m}-${e.target.value.padStart(2, "0")}`)}
+                          className="px-2 py-2 bg-slate-800 border border-slate-700 rounded-xl text-slate-200 focus:ring-2 focus:ring-harmony-gold/50 outline-none transition-all text-xs"
+                        >
+                          {Array.from({ length: 31 }, (_, i) => (
+                            <option key={i + 1} value={(i + 1).toString().padStart(2, "0")}>
+                              {i + 1}
+                            </option>
+                          ))}
+                        </select>
+                        <select
+                          value={m}
+                          onChange={(e) => setEventDate(`${y}-${e.target.value.padStart(2, "0")}-${d}`)}
+                          className="px-2 py-2 bg-slate-800 border border-slate-700 rounded-xl text-slate-200 focus:ring-2 focus:ring-harmony-gold/50 outline-none transition-all text-xs"
+                        >
+                          {Array.from({ length: 12 }, (_, i) => (
+                            <option key={i + 1} value={(i + 1).toString().padStart(2, "0")}>
+                              Tháng {i + 1}
+                            </option>
+                          ))}
+                        </select>
+                        <select
+                          value={y}
+                          onChange={(e) => setEventDate(`${e.target.value}-${m}-${d}`)}
+                          className="px-2 py-2 bg-slate-800 border border-slate-700 rounded-xl text-slate-200 focus:ring-2 focus:ring-harmony-gold/50 outline-none transition-all text-xs"
+                        >
+                          {Array.from({ length: 10 }, (_, i) => {
+                            const year = new Date().getFullYear() - i;
+                            return <option key={year} value={year}>{year}</option>;
+                          })}
+                        </select>
+                      </>
+                    );
+                  })()}
+                </div>
               </div>
               <div>
                 <label className="text-xs text-slate-500 block mb-1 ml-1">Mô tả sự kiện</label>
@@ -167,7 +203,7 @@ export default function JournalPage() {
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2 text-xs text-slate-500">
                         <Calendar size={14} />
-                        {new Date(entry.eventDate).toLocaleDateString("vi-VN")}
+                        {formatDateVN(entry.eventDate)}
                       </div>
                       <div className="flex items-center gap-2">
                         {entry.status === "verified" && <span className="text-[10px] bg-green-500/10 text-green-500 px-2 py-0.5 rounded-full border border-green-500/20 flex items-center gap-1"><CheckCircle2 size={10} /> Đúng dự báo</span>}

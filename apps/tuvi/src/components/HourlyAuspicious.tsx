@@ -39,8 +39,9 @@ export function HourlyAuspicious() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">
-              Ngày
+               Ngày (Ngày/Tháng/Năm)
             </label>
+
             <input
               type="date"
               value={date}
@@ -51,17 +52,50 @@ export function HourlyAuspicious() {
 
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">
-              Năm Sinh
+               Ngày
             </label>
-            <input
-              type="number"
-              min={1900}
-              max={2024}
-              value={birthYear}
-              onChange={(e) => setBirthYear(Number(e.target.value))}
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-              placeholder="Năm sinh"
-            />
+            <div className="grid grid-cols-3 gap-2">
+              {(() => {
+                const [y, m, d] = date.split("-");
+                return (
+                  <>
+                    <select
+                      value={d}
+                      onChange={(e) => setDate(`${y}-${m}-${e.target.value.padStart(2, "0")}`)}
+                      className="px-2 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                    >
+                      {Array.from({ length: 31 }, (_, i) => (
+                        <option key={i + 1} value={(i + 1).toString().padStart(2, "0")}>
+                          {i + 1}
+                        </option>
+                      ))}
+                    </select>
+                    <select
+                      value={m}
+                      onChange={(e) => setDate(`${y}-${e.target.value.padStart(2, "0")}-${d}`)}
+                      className="px-2 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                    >
+                      {Array.from({ length: 12 }, (_, i) => (
+                        <option key={i + 1} value={(i + 1).toString().padStart(2, "0")}>
+                          Tháng {i + 1}
+                        </option>
+                      ))}
+                    </select>
+                    <select
+                      value={y}
+                      onChange={(e) => setDate(`${e.target.value}-${m}-${d}`)}
+                      className="px-2 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                    >
+                      {Array.from({ length: 10 }, (_, i) => {
+                        const year = new Date().getFullYear() - i;
+                        return <option key={year} value={year}>{year}</option>;
+                      })}
+                    </select>
+                  </>
+                );
+              })()}
+            </div>
+
           </div>
         </div>
 

@@ -1,5 +1,6 @@
 import { prisma } from "@harmony/database";
 import { notFound } from "next/navigation";
+import { formatDateVN } from "@/lib/date-utils";
 
 const db = prisma;
 
@@ -71,7 +72,7 @@ export default async function PDFReportPage({ params }: { params: { id: string }
             <div key={i} className="p-6 bg-white border border-slate-100 rounded-lg shadow-sm space-y-2">
               <div className="flex justify-between items-center">
                 <span className="text-xs font-bold uppercase text-harmony-gold">{p.category}</span>
-                <span className="text-xs text-slate-400">{p.targetDate ? new Date(p.targetDate).toLocaleDateString("vi-VN") : "Vĩnh viễn"}</span>
+                <span className="text-xs text-slate-400">{p.targetDate ? formatDateVN(p.targetDate) : "Vĩnh viễn"}</span>
               </div>
               <p className="text-slate-700 italic leading-relaxed">"{p.content}"</p>
             </div>
