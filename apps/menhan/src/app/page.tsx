@@ -1,12 +1,28 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 
 export default function Page() {
+  const [hasProfile, setHasProfile] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    async function checkProfile() {
+      try {
+        const res = await fetch("/api/profile");
+        setHasProfile(res.ok);
+      } catch {
+        setHasProfile(false);
+      }
+    }
+    checkProfile();
+  }, []);
+
   return (
     <main className="relative min-h-screen flex flex-col items-center justify-center p-6 overflow-hidden">
       {/* Ambient Background Glow */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-harmony-purple/10 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] bg-harmony-teal/10 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] bg-harmony-teal/100 blur-[100px] rounded-full pointer-events-none" />
 
       <div className="relative z-10 text-center max-w-3xl mx-auto space-y-8">
         <div className="space-y-4">
@@ -19,15 +35,21 @@ export default function Page() {
         </div>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
-          <Link 
-            href="/onboarding" 
-            className="px-8 py-4 bg-harmony-gold text-slate-950 font-medium rounded-full hover:bg-harmony-gold/90 transition-all hover:scale-105 active:scale-95 shadow-lg shadow-harmony-gold/20"
-          >
-            Bắt đầu hành trình
-          </Link>
+          {hasProfile === null ? (
+            <div className="px-8 py-4 bg-harmony-gold/50 text-slate-950 font-medium rounded-full animate-pulse w-full sm:w-auto text-center">
+              Đang tải...
+            </div>
+          ) : (
+            <Link 
+              href="/onboarding" 
+              className="px-8 py-4 bg-harmony-gold text-slate-950 font-medium rounded-full hover:bg-harmony-gold/90 transition-all hover:scale-105 active:scale-95 shadow-lg shadow-harmony-gold/20 w-full sm:w-auto text-center"
+            >
+              {hasProfile ? "Cập nhật thông tin" : "Bắt đầu hành trình"}
+            </Link>
+          )}
           <Link 
             href="/chat" 
-            className="px-8 py-4 bg-transparent border border-slate-700 text-slate-300 font-medium rounded-full hover:bg-slate-800 transition-all"
+            className="px-8 py-4 bg-transparent border border-slate-700 text-slate-300 font-medium rounded-full hover:bg-slate-800 transition-all w-full sm:w-auto text-center"
           >
             Trò chuyện cùng Master AI
           </Link>
