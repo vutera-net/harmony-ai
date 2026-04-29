@@ -44,6 +44,26 @@ export async function GET(req: NextRequest) {
       where: { userId },
     });
 
+    if (!profile && userData.user?.birthDate) {
+      // Auto-sync profile from SSO if not exists and SSO has birth info
+      const user = userData.user;
+      await db.profile.create({
+        data: {
+          userId,
+          gender: user.gender,
+          birthDate: new Date(user.birthDate),
+          birthTime: user.birthTime || null,
+          birthLocation: user.birthLocation,
+          birthTimezone: user.birthTimezone || "Asia/Ho_Chi_Minh",
+        },
+      });
+      
+      // Fetch again to return the created profile
+      return NextResponse.json({ 
+        profile: await db.profile.findUnique({ where: { userId } }) 
+      });
+    }
+
     return NextResponse.json({ profile });
   } catch (error) {
     console.error("[PROFILE_GET_ERROR]", error);
