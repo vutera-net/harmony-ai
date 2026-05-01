@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getTokenFromRequest } from "@harmony/auth/middleware";
 import { prisma, ensureUserExists } from "@harmony/database";
+type JournalEntry = { eventDate: Date; content: string; status: string };
 import { buildChartContext, formatChartForPrompt } from "@/lib/chart-context";
 import { buildSystemPrompt } from "@/lib/master-ai-prompt";
 import { getAIProvider, AIMessage } from "@harmony/ai-provider";
@@ -74,7 +75,7 @@ export async function POST(req: NextRequest) {
               const isPremium = subscription?.plan !== "FREE";
               if (isPremium) {
                 const memory = profile?.aiMemory as any || {};
-                const historySummary = journalEntries.map(e => 
+                const historySummary = journalEntries.map((e: JournalEntry) =>
                   `Event on ${e.eventDate.toISOString().split('T')[0]}: ${e.content} (Status: ${e.status})`
                 ).join("\n");
 

@@ -4,9 +4,10 @@ import { formatDateVN } from "@/lib/date-utils";
 
 const db = prisma;
 
-export default async function PDFReportPage({ params }: { params: { id: string } }) {
+export default async function PDFReportPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const chart = await db.chart.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: {
       profile: true,
       predictions: true,
