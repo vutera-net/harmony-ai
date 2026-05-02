@@ -150,50 +150,50 @@ Có 4 codebase hiện tại:
 
 > Engine đã được đưa vào packages/astrology ở Phase 0 — B1 chỉ cần wiring.
 
-- [ ] **B1.1** Thêm `@harmony/astrology` vào `apps/menhan/package.json`
-- [ ] **B1.2** Xóa stub `apps/menhan/src/lib/astrology-engine.ts`, thay bằng import `tuvi-engine` từ `@harmony/astrology`
-- [ ] **B1.3** Xóa stub `apps/menhan/src/lib/compatibility.ts`, thay bằng import `tuong-hop-engine` từ `@harmony/astrology`
-- [ ] **B1.4** Cập nhật `apps/menhan/src/lib/chart-context.ts` để dùng types từ `@harmony/astrology`
+- [x] **B1.1** Thêm `@harmony/astrology` vào `apps/menhan/package.json`
+- [x] **B1.2** Xóa stub `apps/menhan/src/lib/astrology-engine.ts`, thay bằng import `tuvi-engine` từ `@harmony/astrology`
+- [x] **B1.3** Xóa stub `apps/menhan/src/lib/compatibility.ts`, thay bằng import `tuong-hop-engine` từ `@harmony/astrology`
+- [x] **B1.4** Cập nhật `apps/menhan/src/lib/chart-context.ts` để dùng types từ `@harmony/astrology`
 
 ### B2. UI Components (refactor localStorage → API)
 
-- [ ] **B2.1** Port `anmenh/src/components/pages/BatTu.tsx`
+- [x] **B2.1** Port `anmenh/src/components/pages/BatTu.tsx`
   - Refactor: đọc profile từ API `/api/profile` thay vì localStorage
-- [ ] **B2.2** Port `anmenh/src/components/pages/BatTrach.tsx`
+- [x] **B2.2** Port `anmenh/src/components/pages/BatTrach.tsx`
   - Refactor: đọc/ghi từ API
-- [ ] **B2.3** Port `anmenh/src/components/pages/CanXuong.tsx`
+- [x] **B2.3** Port `anmenh/src/components/pages/CanXuong.tsx`
   - Refactor: đọc/ghi từ API
-- [ ] **B2.4** Port `anmenh/src/components/pages/TuongHop.tsx`
+- [x] **B2.4** Port `anmenh/src/components/pages/TuongHop.tsx`
   - Refactor: đọc/ghi từ API
-- [ ] **B2.5** Port `anmenh/src/components/RadarChart.tsx` (Ngũ Hành radar)
+- [x] **B2.5** Port `anmenh/src/components/RadarChart.tsx` (Ngũ Hành radar)
 
 ### B3. API Routes (mới — không có trong anmenh)
 
-- [ ] **B3.1** Tạo `POST /api/battu/analyze` — nhận birth data, trả Bát Tự đầy đủ
-- [ ] **B3.2** Tạo `POST /api/tuong-hop` — nhận 2 profiles, trả kết quả tương hợp
-- [ ] **B3.3** Tạo `POST /api/can-xuong` — nhận birth data, trả Cân Xương kết quả
+- [x] **B3.1** Tạo `POST /api/battu/analyze` — nhận birth data, trả Bát Tự đầy đủ
+- [x] **B3.2** Tạo `POST /api/tuong-hop` — nhận 2 profiles, trả kết quả tương hợp
+- [x] **B3.3** Tạo `POST /api/can-xuong` — nhận birth data, trả Cân Xương kết quả
 
 ### B4. Pages
 
-- [ ] **B4.1** Tạo `/bat-tu` page — Bát Tự Tứ Trụ
-- [ ] **B4.2** Tạo `/bat-trach` page — Bát Trạch Phong Thủy
-- [ ] **B4.3** Tạo `/can-xuong` page — Cân Xương Đoán Số
-- [ ] **B4.4** Tạo `/tuong-hop` page — Tương Hợp đôi lứa
+- [x] **B4.1** Tạo `/bat-tu` page — Bát Tự Tứ Trụ
+- [x] **B4.2** Tạo `/bat-trach` page — Bát Trạch Phong Thủy
+- [x] **B4.3** Tạo `/can-xuong` page — Cân Xương Đoán Số
+- [x] **B4.4** Tạo `/tuong-hop` page — Tương Hợp đôi lứa
 
 ### B5. Tích hợp với Master AI
 
-- [ ] **B5.1** Kết nối kết quả Bát Tự → context cho Master AI chat (`chart-context.ts`)
-- [ ] **B5.2** Cập nhật `master-ai-prompt.ts` để nhận thêm data từ Bát Tự engine mới
+- [x] **B5.1** Kết nối kết quả Bát Tự → context cho Master AI chat (`chart-context.ts`)
+- [x] **B5.2** Cập nhật `master-ai-prompt.ts` để nhận thêm data từ Bát Tự engine mới
 
 ---
 
 ## PHASE C — Dọn dẹp
 
-- [ ] **C1** Verify `apps/tuvi/` chạy được end-to-end (calendar, xem ngày, tử vi hàng ngày)
-- [ ] **C2** Verify `apps/menhan/` chạy được end-to-end (onboarding → bát tự → master AI chat)
-- [ ] **C3** Xóa hoặc archive `tuvi/` root (sau khi verify apps/tuvi hoạt động)
-- [ ] **C4** Xóa hoặc archive `anmenh/` root (sau khi verify apps/menhan hoạt động)
-- [ ] **C5** Cập nhật monorepo root `package.json` / turbo config nếu cần
+- [x] **C1** Verify `apps/tuvi/` chạy được end-to-end (calendar, xem ngày, tử vi hàng ngày)
+- [x] **C2** Verify `apps/menhan/` chạy được end-to-end (onboarding → bát tự → master AI chat)
+- [x] **C3** Xóa hoặc archive `tuvi/` root (sau khi verify apps/tuvi hoạt động)
+- [x] **C4** Xóa hoặc archive `anmenh/` root (sau khi verify apps/menhan hoạt động)
+- [x] **C5** Cập nhật monorepo root `package.json` / turbo config nếu cần
 
 ---
 
