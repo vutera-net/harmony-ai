@@ -1,44 +1,66 @@
-import { MetadataRoute } from "next";
+import type { MetadataRoute } from 'next'
+import { getAllPostsMeta } from '@/lib/blog'
+
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://tuvi.vutera.net'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://tuvi.vutera.net";
-  const tools = ["calendar", "lucky-days", "basic-chart", "horoscope"];
-  const birthYears = Array.from({ length: 71 }, (_, i) => 1940 + i);
+  const today = new Date()
+  const zodiacs = ['ty', 'suu', 'dan', 'mao', 'thin', 'ti', 'ngo', 'mui', 'than', 'dau', 'tuat', 'hoi']
+  const nguHanh = ['kim', 'moc', 'thuy', 'hoa', 'tho']
 
-  const toolRoutes = tools.map((tool) => ({
-    url: `${baseUrl}/tools/${tool}`,
-    lastModified: new Date(),
-    changeFrequency: "weekly" as const,
+  const CURRENT_YEAR = today.getFullYear()
+  const tuViYears = [CURRENT_YEAR - 1, CURRENT_YEAR, CURRENT_YEAR + 1, CURRENT_YEAR + 2]
+
+  const staticPages: MetadataRoute.Sitemap = [
+    { url: BASE_URL, lastModified: today, changeFrequency: 'daily', priority: 1 },
+    { url: `${BASE_URL}/lich`, lastModified: today, changeFrequency: 'daily', priority: 0.9 },
+    { url: `${BASE_URL}/xem-menh`, lastModified: today, changeFrequency: 'weekly', priority: 0.8 },
+    { url: `${BASE_URL}/tu-vi`, lastModified: today, changeFrequency: 'weekly', priority: 0.8 },
+    { url: `${BASE_URL}/xem-ngay`, lastModified: today, changeFrequency: 'daily', priority: 0.9 },
+    { url: `${BASE_URL}/phong-thuy`, lastModified: today, changeFrequency: 'weekly', priority: 0.7 },
+    { url: `${BASE_URL}/tu-vi-hang-ngay`, lastModified: today, changeFrequency: 'daily', priority: 0.9 },
+  ]
+
+  const zodiacPages: MetadataRoute.Sitemap = zodiacs.map((z) => ({
+    url: `${BASE_URL}/tu-vi-hang-ngay?zodiac=${z}`,
+    lastModified: today,
+    changeFrequency: 'daily' as const,
     priority: 0.8,
-  }));
+  }))
 
-  const tuViRoutes = birthYears.map((year) => ({
-    url: `${baseUrl}/tu-vi/${year}`,
-    lastModified: new Date(),
-    changeFrequency: "monthly" as const,
+  const tuViNamPages: MetadataRoute.Sitemap = zodiacs.flatMap((z) =>
+    tuViYears.map((y) => ({
+      url: `${BASE_URL}/tu-vi/${z}/nam-${y}`,
+      lastModified: today,
+      changeFrequency: 'yearly' as const,
+      priority: 0.75,
+    }))
+  )
+
+  const menhPages: MetadataRoute.Sitemap = nguHanh.map((m) => ({
+    url: `${BASE_URL}/phong-thuy/menh-${m}`,
+    lastModified: today,
+    changeFrequency: 'monthly' as const,
+    priority: 0.6,
+  }))
+
+  const lichPages: MetadataRoute.Sitemap = Array.from({ length: 30 }, (_, i) => {
+    const dt = new Date(today)
+    dt.setDate(today.getDate() + i)
+    return {
+      url: `${BASE_URL}/lich/${dt.getFullYear()}/${dt.getMonth() + 1}/${dt.getDate()}`,
+      lastModified: dt,
+      changeFrequency: 'daily' as const,
+      priority: 0.6,
+    }
+  })
+
+  const blogPosts: MetadataRoute.Sitemap = getAllPostsMeta().map((post) => ({
+    url: `${BASE_URL}/blog/${post.slug}`,
+    lastModified: new Date(post.date),
+    changeFrequency: 'weekly' as const,
     priority: 0.7,
-  }));
+  }))
 
-  return [
-    {
-      url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: "daily" as const,
-      priority: 1,
-    },
-    {
-      url: `${baseUrl}/about`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/tu-vi`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.8,
-    },
-    ...toolRoutes,
-    ...tuViRoutes,
-  ];
+  return [...staticPages, ...zodiacPages, ...tuViNamPages, ...menhPages, ...lichPages, ...blogPosts]
 }

@@ -97,17 +97,17 @@ Có 4 codebase hiện tại:
 
 ### A1. Kết nối `@harmony/astrology`
 
-- [ ] **A1.1** Thêm `@harmony/astrology` vào `apps/tuvi/package.json`
-- [ ] **A1.2** Xóa/thay thế `apps/tuvi/src/lib/calendar.ts` stub bằng import từ `@harmony/astrology`
-- [ ] **A1.3** Copy `apps/tuvi/src/lib/engines/date-selection-engine.ts` (local, từ Phase 0.5)
-- [ ] **A1.4** Copy `apps/tuvi/src/lib/engines/horoscope-generator.ts` (local, từ Phase 0.5)
+- [x] **A1.1** Thêm `@harmony/astrology` vào `apps/tuvi/package.json`
+- [x] **A1.2** Xóa/thay thế `apps/tuvi/src/lib/calendar.ts` stub bằng import từ `@harmony/astrology`
+- [x] **A1.3** Copy `apps/tuvi/src/lib/engines/date-selection-engine.ts` (local, từ Phase 0.5)
+- [x] **A1.4** Copy `apps/tuvi/src/lib/engines/horoscope-generator.ts` (local, từ Phase 0.5)
 
 ### A2. API Routes
 
-- [ ] **A2.1** Port `tuvi/src/app/api/calendar/` (3 routes: `/`, `/month`, `/convert`)
-- [ ] **A2.2** Port `tuvi/src/app/api/ngaytot/` (search + check)
+- [x] **A2.1** Port `tuvi/src/app/api/calendar/` (3 routes: `/`, `/month`, `/convert`)
+- [x] **A2.2** Port `tuvi/src/app/api/ngaytot/` (search + check)
 - [x] **A2.3** Port `tuvi/src/app/api/phongthuy/` (battrach + cuucung)
-- [ ] **A2.4** Port `tuvi/src/app/api/tuvi/daily` (tử vi hàng ngày)
+- [x] **A2.4** Port `tuvi/src/app/api/tuvi/daily` (tử vi hàng ngày)
 - [x] **A2.5** Port `tuvi/src/app/api/tuvi/chart` (lá số cơ bản, year-only version)
 
 ### A3. UI Components
@@ -120,23 +120,23 @@ Có 4 codebase hiện tại:
 
 ### A4. Pages
 
-- [ ] **A4.1** Port `/lich/[year]/[month]/[day]` — Lịch Vạn Niên chi tiết (ISR)
+- [x] **A4.1** Port `/lich/[year]/[month]/[day]` — Lịch Vạn Niên chi tiết (ISR)
 - [x] **A4.2** Port `/xem-ngay` — Xem ngày tốt/xấu
 - [x] **A4.3** Port `/xem-menh` — Xem mệnh Ngũ Hành
-- [ ] **A4.4** Port `/tu-vi-hang-ngay` — Tử Vi hàng ngày 12 con giáp
-- [ ] **A4.5** Port `/tu-vi/[congiap]/nam-[year]` — SEO routes
-- [ ] **A4.6** Port `/phong-thuy/menh-[nguhanh]` — SEO routes Phong Thủy
-- [ ] **A4.7** Port `/blog/[slug]` — Blog SEO
+- [x] **A4.4** Port `/tu-vi-hang-ngay` — Tử Vi hàng ngày 12 con giáp
+- [x] **A4.5** Port `/tu-vi/[congiap]/nam-[year]` — SEO routes
+- [x] **A4.6** Port `/phong-thuy/menh-[nguhanh]` — SEO routes Phong Thủy
+- [x] **A4.7** Port `/blog/[slug]` — Blog SEO
 - [x] **A4.8** Port `/` — Trang chủ
 
 ### A5. Infrastructure
 
-- [ ] **A5.1** Review `packages/database/prisma/schema.prisma` — đối chiếu với `tuvi/prisma/schema.prisma`, bổ sung models còn thiếu (DailyHoroscope, DailyCalendar, SearchHistory...)
-- [ ] **A5.2** Port `tuvi/src/lib/seo/` (meta-helpers, structured-data)
+- [x] **A5.1** Review `packages/database/prisma/schema.prisma` — đối chiếu với `tuvi/prisma/schema.prisma`, bổ sung models còn thiếu (DailyHoroscope, DailyCalendar, SearchHistory...)
+- [x] **A5.2** Port `tuvi/src/lib/seo/` (meta-helpers, structured-data)
 - [x] **A5.3** Port `tuvi/src/lib/cache.ts` (Redis caching strategy)
-- [ ] **A5.4** Port `tuvi/src/app/sitemap.ts` + `robots.ts`
-- [ ] **A5.5** Port blog content từ `tuvi/content/blog/`
-- [ ] **A5.6** Kiểm tra và điều chỉnh dependencies trong `apps/tuvi/package.json`
+- [x] **A5.4** Port `tuvi/src/app/sitemap.ts` + `robots.ts`
+- [x] **A5.5** Port blog content từ `tuvi/content/blog/`
+- [x] **A5.6** Kiểm tra và điều chỉnh dependencies trong `apps/tuvi/package.json`
   - Cần thêm: `iztro`, `amlich`, `date-fns`
 
 ---

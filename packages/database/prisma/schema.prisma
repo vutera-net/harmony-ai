@@ -47,6 +47,7 @@ model User {
   subscriptions Subscription[]
   journalEntries JournalEntry[]
   payments       Payment[]
+  searches       SearchHistory[]
 }
 
 
@@ -191,8 +192,43 @@ model Payment {
   
   createdAt             DateTime      @default(now())
   updatedAt             DateTime      @updatedAt
-
+  
   @@index([userId])
   @@index([status])
   @@index([featureId])
 }
+
+model DailyHoroscope {
+  id        String   @id @default(cuid())
+  date      DateTime @db.Date
+  zodiac    String   // ty, suu, dan, mao, thin, ti, ngo, mui, than, dau, tuat, hoi
+  content   Json     // DailyHoroscope object
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([date, zodiac])
+  @@index([date])
+}
+
+model DailyCalendar {
+  id        String   @id @default(cuid())
+  date      DateTime @db.Date @unique
+  lunarData Json
+  dayInfo   Json
+  createdAt DateTime @default(now())
+
+  @@index([date])
+}
+
+model SearchHistory {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String   // calendar/tuvi/ngaytot/phongthuy
+  query     Json
+  result    Json?
+  createdAt DateTime @default(now())
+
+  @@index([userId, type])
+}
+

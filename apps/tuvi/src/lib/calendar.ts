@@ -1,50 +1,9 @@
-import { getLunar } from "chinese-lunar-calendar";
-
-// Định nghĩa chi nhánh (Heavenly Stems)
-const heavenlyStems = [
-  "Giáp",
-  "Ất",
-  "Bính",
-  "Đinh",
-  "Mậu",
-  "Kỷ",
-  "Canh",
-  "Tân",
-  "Nhâm",
-  "Quý",
-];
-
-// Định nghĩa địa chi (Earthly Branches)
-const earthlyBranches = [
-  "Tý",
-  "Sửu",
-  "Dần",
-  "Mão",
-  "Thìn",
-  "Tỵ",
-  "Ngọ",
-  "Mùi",
-  "Thân",
-  "Dậu",
-  "Tuất",
-  "Hợi",
-];
-
-// Định nghĩa năm Âm Lịch theo 12 Con Giáp
-const zodiacAnimals = [
-  "Tý",
-  "Sửu",
-  "Dần",
-  "Mão",
-  "Thìn",
-  "Tỵ",
-  "Ngọ",
-  "Mùi",
-  "Thân",
-  "Dậu",
-  "Tuất",
-  "Hợi",
-];
+import { 
+  solarToLunar, 
+  DIA_CHI, 
+  THIEN_CAN, 
+  generateTuViChart 
+} from '@harmony/astrology'
 
 export interface CalendarInfo {
   solarDate: string;
@@ -72,38 +31,23 @@ export interface DayLuck {
  * Convert solar date to lunar calendar
  */
 export function toLunarDate(year: number, month: number, day: number): CalendarInfo {
-  const lunar = getLunar(year, month, day);
-
-  // Parse lunar year to get the year number
-  // The getLunar function returns zodiac as '鼠', we need the actual year number
-  // For simplicity, we'll use a formula based on the Heavenly Stem and Earthly Branch
-  const zodiacIndex = {
-    "鼠": 0, "牛": 1, "虎": 2, "兔": 3, "龙": 4, "蛇": 5,
-    "马": 6, "羊": 7, "猴": 8, "鸡": 9, "狗": 10, "猪": 11,
-  }[lunar.zodiac] ?? 0;
-
-  // Calculate lunarYear based on the formula (year - 1900) should align
-  const lunarYear = (year - 1 - zodiacIndex + 1900) + (zodiacIndex > ((year - 1900) % 12) ? 1 : 0);
-
-  const stemIndex = (year - 1900) % 10;
-  const branchIndex = zodiacIndex;
-
+  const lunar = solarToLunar(day, month, year);
+  
   return {
     solarDate: `${year}/${month}/${day}`,
-    lunarDate: `${lunar.lunarDate}/${lunar.lunarMonth}/${year}`,
-    lunarMonth: lunar.lunarMonth,
-    lunarDay: lunar.lunarDate,
-    lunarYear: lunarYear,
-    zodiacYear: zodiacAnimals[branchIndex],
-    heavenlyStem: heavenlyStems[stemIndex],
-    earthlyBranch: earthlyBranches[branchIndex],
-    cyclicalYear: `${heavenlyStems[stemIndex]} ${earthlyBranches[branchIndex]}`,
+    lunarDate: `${lunar.day}/${lunar.month}/${lunar.year}`,
+    lunarMonth: lunar.month,
+    lunarDay: lunar.day,
+    lunarYear: lunar.year,
+    zodiacYear: DIA_CHI[lunar.chiYear],
+    heavenlyStem: THIEN_CAN[lunar.canYear],
+    earthlyBranch: DIA_CHI[lunar.chiYear],
+    cyclicalYear: `${THIEN_CAN[lunar.canYear]} ${DIA_CHI[lunar.chiYear]}`,
   };
 }
 
 /**
  * Calculate luck for a specific date based on zodiac
- * Dựa vào Tử Vi logic đơn giản
  */
 export function calculateDayLuck(
   date: Date,
@@ -115,17 +59,14 @@ export function calculateDayLuck(
 
   const lunar = toLunarDate(year, month, day);
 
-  // Simple algorithm: ngày và giờ tốt xấu dựa vào chi nhánh
   const dayNum = lunar.lunarDay % 12;
   const zodiacMatch = (zodiacIndex + dayNum) % 12 === 0;
 
-  // Determine luck level
   let luckLevel: "Tốt" | "Trung bình" | "Xấu" = "Trung bình";
   let luckScore = 50;
 
-  // Điều kiện ngày tốt
-  const luckyDays = [1, 7, 8, 14, 15, 21, 22, 28, 29]; // Sample lucky days
-  const unluckyDays = [5, 6, 11, 12, 17, 18, 23, 24]; // Sample unlucky days
+  const luckyDays = [1, 7, 8, 14, 15, 21, 22, 28, 29]; 
+  const unluckyDays = [5, 6, 11, 12, 17, 18, 23, 24]; 
 
   if (luckyDays.includes(lunar.lunarDay)) {
     luckLevel = zodiacMatch ? "Tốt" : "Trung bình";
@@ -135,30 +76,21 @@ export function calculateDayLuck(
     luckScore = zodiacMatch ? 40 : 20;
   }
 
-  // Auspicious hours (Giờ Hoàng Đạo) - 12 hours per day
   const hours = [
-    "23:00-01:00 (Tý)",
-    "01:00-03:00 (Sửu)",
-    "03:00-05:00 (Dần)",
-    "05:00-07:00 (Mão)",
-    "07:00-09:00 (Thìn)",
-    "09:00-11:00 (Tỵ)",
-    "11:00-13:00 (Ngọ)",
-    "13:00-15:00 (Mùi)",
-    "15:00-17:00 (Thân)",
-    "17:00-19:00 (Dậu)",
-    "19:00-21:00 (Tuất)",
-    "21:00-23:00 (Hợi)",
+    "23:00-01:00 (Tý)", "01:00-03:00 (Sửu)", "03:00-05:00 (Dần)",
+    "05:00-07:00 (Mão)", "07:00-09:00 (Thìn)", "09:00-11:00 (Tỵ)",
+    "11:00-13:00 (Ngọ)", "13:00-15:00 (Mùi)", "15:00-17:00 (Thân)",
+    "17:00-19:00 (Dậu)", "19:00-21:00 (Tuất)", "21:00-23:00 (Hợi)",
   ];
 
   const auspiciousHours = hours.filter((_, idx) => {
     const auspiciousIdx = (zodiacIndex + dayNum + idx) % 12;
-    return auspiciousIdx % 2 === 0; // Every other hour is auspicious
+    return auspiciousIdx % 2 === 0;
   });
 
   const inauspiciousHours = hours.filter((_, idx) => {
     const inauspiciousIdx = (zodiacIndex + dayNum + idx) % 12;
-    return inauspiciousIdx % 2 !== 0; // Opposite hours are inauspicious
+    return inauspiciousIdx % 2 !== 0;
   });
 
   return {
@@ -166,9 +98,9 @@ export function calculateDayLuck(
     lunar: lunar.lunarDate,
     luckLevel,
     luckScore,
-    zodiacLuck: `${zodiacMatch ? "Rất " : ""}hợp với ${zodiacAnimals[zodiacIndex]}`,
-    auspiciousHours: auspiciousHours.slice(0, 4), // Top 4 auspicious hours
-    inauspiciousHours: inauspiciousHours.slice(0, 4), // Top 4 inauspicious hours
+    zodiacLuck: `${zodiacMatch ? "Rất " : ""}hợp với ${DIA_CHI[zodiacIndex]}`,
+    auspiciousHours: auspiciousHours.slice(0, 4),
+    inauspiciousHours: inauspiciousHours.slice(0, 4),
   };
 }
 
@@ -198,8 +130,6 @@ export function findLuckyDaysInMonth(
  * Get zodiac index from birth date
  */
 export function getZodiacIndex(year: number): number {
-  // Lunar year follows 12-year cycle
-  // Tý starts at 1900
   return (year - 1900) % 12;
 }
 
@@ -207,7 +137,7 @@ export function getZodiacIndex(year: number): number {
  * Format zodiac name from index
  */
 export function formatZodiac(index: number): string {
-  return zodiacAnimals[index % 12];
+  return DIA_CHI[index % 12];
 }
 
 /**
@@ -232,7 +162,6 @@ export function getMonthCalendarView(
     isCurrentMonth: boolean;
   }> = [];
 
-  // Previous month's days
   const prevMonthDays = new Date(year, month - 1, 0).getDate();
   for (let i = firstDay - 1; i >= 0; i--) {
     const date = prevMonthDays - i;
@@ -248,7 +177,6 @@ export function getMonthCalendarView(
     });
   }
 
-  // Current month's days
   for (let day = 1; day <= daysInMonth; day++) {
     const lunar = toLunarDate(year, month, day);
     const dayNum = lunar.lunarDay % 12;
@@ -271,7 +199,6 @@ export function getMonthCalendarView(
     });
   }
 
-  // Next month's days
   const remainingDays = 42 - calendar.length;
   for (let day = 1; day <= remainingDays; day++) {
     const nextMonth = month === 12 ? 1 : month + 1;
@@ -304,59 +231,37 @@ export function getBasicChart(year: number, month: number, day: number): {
   }>;
   summary: string;
 } {
-  const lunar = toLunarDate(year, month, day);
-  const zodiacIndex = (lunar.lunarYear - 1900) % 12;
+  const lunar = solarToLunar(day, month, year);
+  
+  // Using a simplified version of generateTuViChart for this basic return type
+  const chart = generateTuViChart(
+    'Basic Chart', 
+    'male', // Default to male for basic chart if not provided
+    lunar, 
+    0 // Default hour
+  );
 
   const palaceNames = [
-    "Mệnh",
-    "Anh Em",
-    "Phu Thê",
-    "Tài Lộc",
-    "Con Cái",
-    "Nô Tỳ",
-    "Tử Tù",
-    "Cha Mẹ",
-    "Quan Lộc",
-    "Phước Đức",
-    "Tình Duyên",
-    "Sức Khỏe",
+    "Mệnh", "Anh Em", "Phu Thê", "Tài Lộc", "Con Cái", "Nô Tỳ",
+    "Tử Tù", "Cha Mẹ", "Quan Lộc", "Phước Đức", "Tình Duyên", "Sức Khỏe",
   ];
 
-  const elements = ["Kim", "Mộc", "Thủy", "Hỏa", "Thổ"];
   const palaces = palaceNames.map((name, idx) => {
-    const elementIdx = (zodiacIndex + idx) % 5;
+    const palace = chart.palaces[idx] || { name, mainStars: [] };
     return {
       name,
       position: idx + 1,
-      element: elements[elementIdx],
-      description:
-        idx === 0
-          ? "Cung mệnh mạnh định vận nước này"
-          : `Ảnh hưởng đến ${name.toLowerCase()}`,
+      element: chart.menh,
+      description: idx === 0 ? "Cung mệnh mạnh định vận nước này" : `Ảnh hưởng đến ${name.toLowerCase()}`,
     };
   });
 
-  const descriptions: Record<string, string> = {
-    "Tý": "Người sinh năm Tý thường có tính cách thông minh, nhanh nhạy và tháo vát trong công việc.",
-    "Sửu": "Người sinh năm Sửu có tính chăm chỉ, kiên trì và đáng tin cậy trong các mối quan hệ.",
-    "Dần": "Người sinh năm Dần thường mạnh mẽ, dũng cảm và có tinh thần lãnh đạo.",
-    "Mão": "Người sinh năm Mão tính tình dịu dàng, ngoại giao giỏi và hòa nhập dễ dàng.",
-    "Thìn": "Người sinh năm Thìn có tính cách hùng hồn, vị tha và khát vọng cao.",
-    "Tỵ": "Người sinh năm Tỵ sâu sắc, tư duy logic và ác mộng cảm cơ tốt.",
-    "Ngọ": "Người sinh năm Ngọ năng động, tình cảm và giao tiếp tự nhiên.",
-    "Mùi": "Người sinh năm Mùi có tính chân thành, chu đáo và ưu tiên gia đình.",
-    "Thân": "Người sinh năm Thân thông minh, hoạt bát và nhanh chóng thích ứng.",
-    "Dậu": "Người sinh năm Dậu chi tiết, chính xác và có tiêu chuẩn cao.",
-    "Tuất": "Người sinh năm Tuất trung thành, vững chắc và đáng tin cậy.",
-    "Hợi": "Người sinh năm Hợi hòa nhân, chan chứa và dễ thương.",
-  };
-
   return {
     solarDate: `${year}/${month}/${day}`,
-    lunarDate: lunar.lunarDate,
-    zodiacYear: lunar.zodiacYear,
+    lunarDate: `${lunar.day}/${lunar.month}/${lunar.year}`,
+    zodiacYear: DIA_CHI[lunar.chiYear],
     palaces,
-    summary: descriptions[lunar.zodiacYear] || descriptions["Tý"],
+    summary: `Mệnh ${chart.menh} (${chart.napAm}). Bản mệnh có những đặc điểm đặc trưng của năm ${DIA_CHI[lunar.chiYear]}.`,
   };
 }
 
@@ -373,7 +278,7 @@ export function getYearlyHoroscope(zodiacIndex: number): {
   luckyNumbers: number[];
 } {
   const year = new Date().getFullYear();
-  const zodiac = formatZodiac(zodiacIndex);
+  const zodiac = DIA_CHI[zodiacIndex % 12];
 
   const horoscopes: Record<
     string,
