@@ -10,6 +10,7 @@ export * from './bat-trach-engine';
 export * from './cuu-cung-engine';
 export * from './battu-engine';
 export * from './tuong-hop-engine';
+export * from './can-xuong-engine';
 
 export * from './data/can-chi';
 export * from './data/hoang-dao';

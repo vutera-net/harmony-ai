@@ -11,6 +11,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.90.0",
     "@harmony/ai-provider": "workspace:*",
+    "@harmony/astrology": "workspace:*",
     "@harmony/auth": "workspace:*",
     "@harmony/database": "workspace:*",
     "@harmony/tailwind-config": "workspace:*",

@@ -1,36 +1,11 @@
 import { Profile } from "@harmony/database";
-import { getLunar } from "chinese-lunar-calendar";
-import { calculateMenhCung, distributeStars, StarDistribution } from "./astrology-engine";
-
-// Heavenly Stems (Thiên Can)
-const heavenlyStems = [
-  "Giáp",
-  "Ất",
-  "Bính",
-  "Đinh",
-  "Mậu",
-  "Kỷ",
-  "Canh",
-  "Tân",
-  "Nhâm",
-  "Quý",
-];
-
-// Earthly Branches (Địa Chi / 12 Zodiac Animals)
-const earthlyBranches = [
-  "Tý",
-  "Sửu",
-  "Dần",
-  "Mão",
-  "Thìn",
-  "Tỵ",
-  "Ngọ",
-  "Mùi",
-  "Thân",
-  "Dậu",
-  "Tuất",
-  "Hợi",
-];
+import {
+  solarToLunar,
+  generateTuViChart,
+  calculateBatTu,
+  THIEN_CAN,
+  DIA_CHI
+} from "@harmony/astrology";
 
 // Palace names (12 Tử Vi palaces)
 const palaceNames = [
@@ -75,8 +50,9 @@ export interface ChartContext {
     description: string;
     stars: string[];
   }>;
-  starDistribution: StarDistribution;
+  starDistribution: Record<string, string[]>;
   summary: string;
+  batTu?: any; // Bát Tự data
 }
 
 /**
@@ -91,45 +67,52 @@ export function buildChartContext(profile: Profile): ChartContext {
   const year = birthDate.getFullYear();
   const month = birthDate.getMonth() + 1;
   const day = birthDate.getDate();
-  
-  // Calculate birth hour as integer (1-12)
-  let hour = 1;
+
+  // Calculate birth hour as integer (0-11)
+  let birthHourChi = 0;
   if (profile.birthTime) {
     const [h, m] = profile.birthTime.split(":").map(Number);
-    // Map 24h to 12h (Tý=1, Sửu=2...)
-    hour = Math.floor(h / 2) + 1;
-    if (hour > 12) hour = 1;
+    if (h === 23) {
+      birthHourChi = 0;
+    } else {
+      birthHourChi = Math.floor((h + 1) / 2) % 12;
+    }
   }
 
   // Get lunar calendar data
-  const lunar = getLunar(year, month, day);
+  const lunarDate = solarToLunar(day, month, year);
 
-  // Calculate heavenly stem and earthly branch from birth year
-  const stemIndex = (year - 1900) % 10;
-  const branchIndex = (year - 1900) % 12;
+  // Generate full Tu Vi chart
+  const gender = profile.gender === "MALE" ? "male" : "female";
+  const tuViChart = generateTuViChart(
+    profile.fullName || "User",
+    gender,
+    lunarDate,
+    birthHourChi
+  );
 
-  const heavenlyStem = heavenlyStems[stemIndex];
-  const earthlyBranch = earthlyBranches[branchIndex];
-  const zodiac = earthlyBranch; // Zodiac is the earthly branch
+  // Generate Bat Tu result
+  const batTu = calculateBatTu(birthDate);
 
-  // Determine primary element from db or derive from stem
-  const element = profile.energyType
-    ? elementVN[profile.energyType as string]
-    : derivePrimaryElement(stemIndex);
+  const heavenlyStem = THIEN_CAN[lunarDate.canYear];
+  const earthlyBranch = DIA_CHI[lunarDate.chiYear];
+  const zodiac = earthlyBranch;
 
-  // Advanced Astrology Calculation
-  const menhCung = calculateMenhCung(month, hour);
-  const starDistribution = distributeStars(menhCung, day, month);
+  // Map TuViChart to ChartContext
+  const starDistribution: Record<string, string[]> = {};
+  tuViChart.palaces.forEach(p => {
+    starDistribution[p.name] = p.mainStars.map(s => s.name);
+  });
 
   // Generate 12 palaces with element rotation and assigned stars
-  const palaces = generatePalaces(branchIndex, element, starDistribution);
+  const palaces = generatePalaces(lunarDate.chiYear, tuViChart.menh, starDistribution);
 
   // Generate summary text
-  const summary = generateZodiacSummary(zodiac, earthlyBranch, element);
+  const summary = generateZodiacSummary(zodiac, earthlyBranch, tuViChart.menh);
 
   return {
     name: profile.fullName || null,
-    gender: profile.gender === "MALE" ? "Nam" : "Nữ",
+    gender: gender === "male" ? "Nam" : "Nữ",
     birthYear: year,
     birthMonth: month,
     birthDay: day,
@@ -138,31 +121,12 @@ export function buildChartContext(profile: Profile): ChartContext {
     zodiac,
     heavenlyStem,
     earthlyBranch,
-    element,
+    element: tuViChart.menh,
     palaces,
     starDistribution,
     summary,
+    batTu,
   };
-}
-
-/**
- * Derive primary element from heavenly stem
- * Stems are paired: Giáp/Ất=Mộc, Bính/Đinh=Hỏa, etc.
- */
-function derivePrimaryElement(stemIndex: number): string {
-  const elementMap: Record<number, string> = {
-    0: "Mộc", // Giáp
-    1: "Mộc", // Ất
-    2: "Hỏa", // Bính
-    3: "Hỏa", // Đinh
-    4: "Thổ", // Mậu
-    5: "Thổ", // Kỷ
-    6: "Kim", // Canh
-    7: "Kim", // Tân
-    8: "Thủy", // Nhâm
-    9: "Thủy", // Quý
-  };
-  return elementMap[stemIndex] || "Thổ";
 }
 
 /**
@@ -171,7 +135,7 @@ function derivePrimaryElement(stemIndex: number): string {
 function generatePalaces(
   branchIndex: number,
   primaryElement: string,
-  stars: StarDistribution
+  stars: Record<string, string[]>
 ): ChartContext["palaces"] {
   const elements = ["Kim", "Mộc", "Thủy", "Hỏa", "Thổ"];
   const descriptions: Record<string, string> = {
@@ -225,7 +189,6 @@ function generateZodiacSummary(zodiac: string, branch: string, element: string):
 
 /**
  * Format chart context into readable string for system prompt
- * Now including detailed star distribution
  */
 export function formatChartForPrompt(ctx: ChartContext): string {
   const palaceList = ctx.palaces
