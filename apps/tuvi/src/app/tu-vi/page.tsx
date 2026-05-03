@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { AuthProvider } from "@harmony/auth/context";
 import { TuViHeader } from "@/components/TuViHeader";
-import { Footer } from "@/components/Footer";
 import { getBirthYearRange } from "@/lib/seo";
 
 function TuViIndexContent() {
@@ -115,8 +114,6 @@ function TuViIndexContent() {
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }

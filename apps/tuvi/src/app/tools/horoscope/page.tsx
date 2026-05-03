@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { AuthProvider, useAuthContext } from "@harmony/auth/context";
 import { TuViHeader } from "@/components/TuViHeader";
-import { Footer } from "@/components/Footer";
 import { getZodiacIndex, formatZodiac, getYearlyHoroscope } from "@/lib/calendar";
 
 function HoroscopeContent() {
@@ -206,8 +205,6 @@ function HoroscopeContent() {
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }

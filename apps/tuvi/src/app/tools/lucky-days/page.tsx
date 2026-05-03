@@ -2,7 +2,6 @@
 
 import { AuthProvider } from "@harmony/auth/context";
 import { TuViHeader } from "@/components/TuViHeader";
-import { Footer } from "@/components/Footer";
 import { LuckyDaysCalculator } from "@/components/LuckyDaysCalculator";
 
 function LuckyDaysContent() {
@@ -91,8 +90,6 @@ function LuckyDaysContent() {
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }

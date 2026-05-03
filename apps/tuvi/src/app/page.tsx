@@ -4,7 +4,6 @@ import { AuthProvider } from "@harmony/auth/context";
 import { TuViHeader } from "@/components/TuViHeader";
 import { Hero } from "@/components/Hero";
 import { QuickToolsGrid } from "@/components/QuickToolsGrid";
-import { Footer } from "@/components/Footer";
 
 function TuViHome() {
   return (
@@ -14,7 +13,6 @@ function TuViHome() {
         <Hero />
         <QuickToolsGrid />
       </main>
-      <Footer />
     </div>
   );
 }

@@ -2,7 +2,6 @@
 
 import { AuthProvider } from "@harmony/auth/context";
 import { TuViHeader } from "@/components/TuViHeader";
-import { Footer } from "@/components/Footer";
 import { TuViYearContent } from "./TuViYearContent";
 
 export function PageContent({ year }: { year: string }) {
@@ -11,7 +10,6 @@ export function PageContent({ year }: { year: string }) {
       <div className="min-h-screen flex flex-col bg-slate-50">
         <TuViHeader />
         <TuViYearContent year={year} />
-        <Footer />
       </div>
     </AuthProvider>
   );

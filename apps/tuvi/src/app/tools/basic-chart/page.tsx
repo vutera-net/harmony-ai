@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { AuthProvider, useAuthContext } from "@harmony/auth/context";
 import { TuViHeader } from "@/components/TuViHeader";
-import { Footer } from "@/components/Footer";
 import { getBasicChart } from "@/lib/calendar";
 import { formatDateVN } from "@/lib/date-utils";
 
@@ -279,8 +278,6 @@ function BasicChartContent() {
           )}
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }

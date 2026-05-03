@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { AuthProvider } from "@harmony/auth/context";
 import { TuViHeader } from "@/components/TuViHeader";
-import { Footer } from "@/components/Footer";
 import { getMonthCalendarView } from "@/lib/calendar";
 
 function CalendarContent() {
@@ -241,8 +240,6 @@ function CalendarContent() {
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }
