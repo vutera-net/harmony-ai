@@ -1,9 +1,9 @@
 import { createAuthMiddleware } from "@harmony/auth/middleware";
 
-// Harmony Hub: Landing page - mostly public
+// Harmony Hub: Landing page - fully public
 export const middleware = createAuthMiddleware({
-  protectedRoutes: ["/dashboard", "/account"],
-  publicRoutes: ["/", "/about", "/pricing", "/features"],
+  protectedRoutes: [],
+  publicRoutes: ["/"],
 });
 
 export const config = {

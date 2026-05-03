@@ -1,7 +1,11 @@
+'use client';
 import React from 'react';
 import Link from 'next/link';
+import { useAuthContext } from '@harmony/auth/context';
 
 export default function Hero() {
+  const { user } = useAuthContext();
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-harmony-cream text-gray-800">
       {/* Background Decorative Elements */}
@@ -12,26 +16,33 @@ export default function Hero() {
 
       <div className="container mx-auto px-6 relative z-10 text-center">
         <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-gray-900 mb-6">
-          Harmony <span className="text-harmony-teal">AI</span>
+          {user ? (
+            <>Chào trở lại, <span className="text-harmony-teal">{user.name || 'Bạn'}</span></>
+          ) : (
+            <>Harmony <span className="text-harmony-teal">AI</span></>
+          )}
         </h1>
           <p className="text-xl md:text-2xl text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">
-            Thánh đường số cho sự cân bằng tâm linh. Kết hợp siêu hình học cổ truyền Việt Nam với AI hiện đại để dẫn lối vận mệnh của bạn.
+            {user 
+              ? "Hành trình chiêm nghiệm vận mệnh của bạn vẫn đang tiếp diễn. Hãy quay lại Sanctuary để tìm thấy sự an lạc."
+              : "Thánh đường số cho sự cân bằng tâm linh. Kết hợp siêu hình học cổ truyền Việt Nam với AI hiện đại để dẫn lối vận mệnh của bạn."
+            }
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link 
-              href="https://tuvi.vutera.net" 
-              className="px-8 py-4 bg-harmony-teal text-white rounded-full font-semibold text-lg hover:bg-harmony-teal/90 transition-all shadow-lg hover:shadow-harmony-teal/30"
-            >
-              Khám phá Bản đồ Vận mệnh
-            </Link>
-            <Link 
-              href="#ecosystem" 
-              className="px-8 py-4 bg-white text-harmony-teal border-2 border-harmony-teal rounded-full font-semibold text-lg hover:bg-harmony-teal/5 transition-all"
-            >
-              Khám phá Thánh Đường
-            </Link>
-          </div>
-      </div>
+           <div className="flex flex-col sm:flex-row gap-4 justify-center">
+             <Link 
+               href={user ? "https://menhan.vutera.net/dashboard" : "https://tuvi.vutera.net"} 
+               className="px-8 py-4 bg-harmony-teal text-white rounded-full font-semibold text-lg hover:bg-harmony-teal/90 transition-all shadow-lg hover:shadow-harmony-teal/30"
+             >
+               {user ? "Tiếp tục vào Sanctuary" : "Khám phá Bản đồ Vận mệnh"}
+             </Link>
+             <Link 
+               href="#ecosystem" 
+               className="px-8 py-4 bg-white text-harmony-teal border-2 border-harmony-teal rounded-full font-semibold text-lg hover:bg-harmony-teal/5 transition-all"
+             >
+               Khám phá Thánh Đường
+             </Link>
+           </div>
+       </div>
     </section>
   );
 }

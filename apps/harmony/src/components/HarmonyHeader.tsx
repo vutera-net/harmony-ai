@@ -12,12 +12,12 @@ function HeaderContent() {
 
   if (!user) {
     return (
-      <Link 
-        href={getSSOLoginURL('/')}
-        className="bg-harmony-teal text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-harmony-teal/90 transition-all active:scale-95"
-      >
-        Đăng nhập
-      </Link>
+        <Link 
+          href={getSSOLoginURL('https://menhan.vutera.net/dashboard')}
+          className="bg-harmony-teal text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-harmony-teal/90 transition-all active:scale-95"
+        >
+          Vào Sanctuary
+        </Link>
     );
   }
 
@@ -42,18 +42,18 @@ function HeaderContent() {
         {isOpen && (
           <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-lg py-2 z-50">
             <Link 
-              href="/dashboard" 
+              href="https://menhan.vutera.net/dashboard" 
               onClick={() => setIsOpen(false)}
               className="block px-4 py-2 text-sm text-slate-800 hover:bg-slate-50 hover:text-harmony-teal font-medium"
             >
-              Dashboard
+              Vào Sanctuary
             </Link>
             <Link 
-              href="/account" 
+              href="https://id.vutera.net/account" 
               onClick={() => setIsOpen(false)}
               className="block px-4 py-2 text-sm text-slate-800 hover:bg-slate-50 hover:text-harmony-teal font-medium"
             >
-              Tài khoản
+              Quản lý tài khoản
             </Link>
             <hr className="my-1 border-slate-100" />
             <button 
@@ -91,10 +91,10 @@ function MobileHeaderContent() {
   if (!user) {
     return (
       <Link 
-        href={getSSOLoginURL('/')}
+        href={getSSOLoginURL('https://menhan.vutera.net/dashboard')}
         className="block w-full text-center bg-harmony-teal text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-harmony-teal/90 transition-all"
       >
-        Đăng nhập
+        Vào Sanctuary
       </Link>
     );
   }
@@ -107,12 +107,12 @@ function MobileHeaderContent() {
         </div>
         <span className="text-xs font-semibold text-slate-900 truncate">{user.name || 'Người dùng'}</span>
       </div>
-       <Link href="/dashboard" className="block px-3 py-2 text-sm text-slate-800 hover:bg-slate-50 rounded-lg font-medium">
-         Dashboard
-       </Link>
-       <Link href="/account" className="block px-3 py-2 text-sm text-slate-800 hover:bg-slate-50 rounded-lg font-medium">
-         Tài khoản
-       </Link>
+        <Link href="https://menhan.vutera.net/dashboard" className="block px-3 py-2 text-sm text-slate-800 hover:bg-slate-50 rounded-lg font-medium">
+          Vào Sanctuary
+        </Link>
+        <Link href="https://id.vutera.net/account" className="block px-3 py-2 text-sm text-slate-800 hover:bg-slate-50 rounded-lg font-medium">
+          Quản lý tài khoản
+        </Link>
 
       <button 
         onClick={async () => {
